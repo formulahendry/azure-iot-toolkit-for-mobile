@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 
 import { NavController, NavParams } from 'ionic-angular';
 
-import { ItemDetailsPage } from '../item-details/item-details';
+import { DevicePage } from '../device/device';
 
 @Component({
-  selector: 'page-list',
-  templateUrl: 'list.html'
+  selector: 'page-device-list',
+  templateUrl: 'device-list.html'
 })
-export class ListPage {
+export class DeviceList {
   icons: string[];
   items: Array<{title: string, note: string, icon: string}>;
 
@@ -27,7 +27,7 @@ export class ListPage {
   }
 
   itemTapped(event, item) {
-    this.navCtrl.push(ItemDetailsPage, {
+    this.navCtrl.push(DevicePage, {
       item: item
     });
   }
