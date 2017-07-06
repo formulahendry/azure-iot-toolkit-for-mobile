@@ -6,6 +6,9 @@ import { MyApp } from './app.component';
 import { HelloIonicPage } from '../pages/hello-ionic/hello-ionic';
 import { DevicePage } from '../pages/device/device';
 import { DeviceList } from '../pages/device-list/device-list';
+import { SubscribePage } from '../pages/subscribe/subscribe';
+import { PublishPage } from '../pages/publish/publish';
+import { SimulatePage } from '../pages/simulate/simulate';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -15,7 +18,10 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     MyApp,
     HelloIonicPage,
     DevicePage,
-    DeviceList
+    DeviceList,
+    SubscribePage,
+    PublishPage,
+    SimulatePage
   ],
   imports: [
     BrowserModule,
@@ -26,12 +32,15 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     MyApp,
     HelloIonicPage,
     DevicePage,
-    DeviceList
+    DeviceList,
+    SubscribePage,
+    PublishPage,
+    SimulatePage
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
-export class AppModule {}
+export class AppModule { }
