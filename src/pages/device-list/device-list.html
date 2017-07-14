@@ -8,12 +8,13 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
+  <div *ngIf="isLoading">
+    <ion-spinner></ion-spinner>
+  </div>
+  <ion-list *ngIf="!isLoading">
     <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
+      <ion-icon name="checkmark-circle" item-left></ion-icon>
       {{item.deviceId}}
-      <div class="item-note" item-right>
-        {{item.deviceId}}
-      </div>
     </button>
   </ion-list>
 </ion-content>
