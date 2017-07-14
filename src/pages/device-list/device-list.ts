@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { DevicePage } from '../device/device';
-import { Utility } from '../../utility/utility'
+import { Utility } from '../../utility/utility';
 import * as iothub from 'azure-iothub';
-import { ConnectionString } from "azure-iot-device";
+import { ConnectionString } from 'azure-iot-device';
 
 @Component({
   selector: 'page-device-list',

@@ -1,26 +1,14 @@
-This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
+# Azure IoT Toolkit for Mobile
 
-## How to use this template
+Azure IoT Toolkit for Android, iOS and Windows Phone, based on [Ionic](https://ionicframework.com/).
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
+## Getting Started
 
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
+* Clone this repository: `git clone https://github.com/VSChina/azure-iot-toolkit-for-mobile.git`.
+* Run `npm install` from the project root.
+* Install the ionic CLI (`npm install -g ionic`)
+* To host it in localhost, run `ionic serve` in a terminal from the project root.
+* To deploy it to Android device, run `ionic cordova run android --device`.
 
-### With the Ionic CLI:
 
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
-
-```bash
-$ sudo npm install -g ionic cordova
-$ ionic start myTutorial tutorial
-```
-
-Then, to run it, cd into `myTutorial` and run:
-
-```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
-```
-
-Substitute ios for android if not on a Mac.
 
