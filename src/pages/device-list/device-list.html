@@ -8,8 +8,11 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div *ngIf="isLoading">
-    <ion-spinner></ion-spinner>
+    <ion-spinner class="starting-spinner"></ion-spinner>
   </div>
   <ion-list *ngIf="!isLoading">
     <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
