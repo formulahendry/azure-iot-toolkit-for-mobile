@@ -10,6 +10,7 @@ import { SubscribePage } from '../pages/subscribe/subscribe';
 import { PublishPage } from '../pages/publish/publish';
 import { SimulatePage } from '../pages/simulate/simulate';
 
+import { Items } from '../global/items';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -38,6 +39,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     SimulatePage
   ],
   providers: [
+    Items,
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
