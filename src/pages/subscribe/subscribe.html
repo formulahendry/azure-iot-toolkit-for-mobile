@@ -11,4 +11,9 @@
   <h4 text-center *ngIf="selectedItem">
     You navigated here from <b>{{selectedItem.deviceId}}</b>
   </h4>
+  <div *ngFor="let message of displayMessages.reverse()">
+  <p text-center *ngIf="message.deviceId == selectedItem.deviceId">
+    {{message.message}} {{message.time}}
+  </p>
+  </div>
 </ion-content>

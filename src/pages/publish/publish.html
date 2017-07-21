@@ -11,4 +11,8 @@
   <h4 text-center *ngIf="selectedItem">
     You navigated here from <b>{{selectedItem.deviceId}}</b>
   </h4>
+  <input type="text" name="message" [(ngModel)]="message">
+  <button (click)="sendMessage();">
+    Send
+  </button>
 </ion-content>
