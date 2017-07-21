@@ -22,25 +22,24 @@ export class DeviceList {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items) {
     this.listDevices();
-    this.startTransport();
+    if (this.globalItems.connectionStatus === 'disconnected') {
+      this.startTransport();
+    }
   }
 
   startTransport() {
+    this.globalItems.connectionStatus = 'connecting';
+
     if (!this.transport.initializeIH(this.iotHubConnectionString, '$Default')) {
       return;
     }
     var deviceList = this;
 
     this.transport.connectIH(() => {
-      deviceList.globalItems.connectionStatus = true;
+      deviceList.globalItems.connectionStatus = 'connected';
     }, () => {
-      deviceList.globalItems.connectionStatus = false;
+      deviceList.globalItems.connectionStatus = 'disconnected';
     });
-
-    /*if (!this.globalItems.connectionStatus){
-      alert('connect to IoT Hub error');
-      return;
-    }*/
 
     this.transport.onMessage = (device, message) => {
       deviceList.globalItems.message.push({

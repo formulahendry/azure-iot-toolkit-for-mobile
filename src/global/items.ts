@@ -5,7 +5,7 @@ import { Transport } from '../utility/transport';
 export class Items {
   items: any[] = [];
   transport: Transport;
-  connectionStatus: boolean = false;
+  connectionStatus: string = 'disconnected';
   message: Array<{ deviceId: string, message: string, time: string}> = [];
 
   constructor() {}
