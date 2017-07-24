@@ -14,6 +14,7 @@ import { Items } from '../global/items';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Network } from '@ionic-native/network';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { Network } from '@ionic-native/network';
     StatusBar,
     SplashScreen,
     Network,
+    LocalNotifications,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
