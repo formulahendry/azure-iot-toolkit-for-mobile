@@ -4,16 +4,18 @@
 </ion-header>
 
 <ion-content>
-  <h3 text-center *ngIf="selectedItem">
-    SubscribePage
-    <ion-icon [name]="selectedItem.icon"></ion-icon>
-  </h3>
-  <h4 text-center *ngIf="selectedItem">
-    You navigated here from <b>{{selectedItem.deviceId}}</b>
-  </h4>
-  <div *ngFor="let message of displayMessages.reverse()">
-  <p text-center *ngIf="message.deviceId == selectedItem.deviceId">
-    {{message.message}} {{message.time}}
-  </p>
-  </div>
+  <template ngFor let-message [ngForOf]="displayMessages.reverse()">
+    <template [ngIf]="message.deviceId == selectedItem.deviceId">
+      <div *ngIf="message.image" class="monitor-message-image-div">
+        <img [src]="message.image" class="monitor-message-image" />
+      </div>
+      <ion-item>
+        <ion-avatar item-start *ngIf="message.icon">
+          <img [src]="message.icon" />
+        </ion-avatar>
+        <h2 class="monitor-title"> {{message.message}} </h2>
+        <p class="monitor-time"> {{message.time}} </p>
+      </ion-item>
+    </template>
+  </template>
 </ion-content>

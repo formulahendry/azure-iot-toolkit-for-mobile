@@ -42,10 +42,21 @@ export class DeviceList {
     });
 
     this.transport.onMessage = (device, message) => {
+      let icon = null;
+      let image = null;
+      if (message === 'Door opened') {
+        icon = deviceList.globalItems.icon.alert;
+        image = deviceList.globalItems.image.doorOpened;
+      } else if (message === 'Door closed') {
+        icon = deviceList.globalItems.icon.tick;
+        image = deviceList.globalItems.image.doorClosed;
+      }
       deviceList.globalItems.message.push({
         deviceId: device,
         message: message,
-        time: new Date().toLocaleTimeString()
+        time: new Date().toLocaleTimeString(),
+        icon: icon,
+        image: image
       });
     };
 

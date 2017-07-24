@@ -3,12 +3,12 @@
     <button menuToggle *ngIf="!selectedItem">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>{{selectedItem.title}}</ion-title>
+    <ion-title>{{selectedItem.deviceId}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-tabs>
-  <ion-tab [root]="tab1Root" tabTitle="Subscribe" tabIcon="home" [rootParams]="selectedItem"></ion-tab>
-  <ion-tab [root]="tab2Root" tabTitle="Publish" tabIcon="information-circle" [rootParams]="selectedItem"></ion-tab>
-  <ion-tab [root]="tab3Root" tabTitle="Simulate" tabIcon="contacts" [rootParams]="selectedItem"></ion-tab>
+  <ion-tab [root]="tab1Root" tabTitle="Monitor" tabIcon="eye" [rootParams]="selectedItem"></ion-tab>
+  <ion-tab [root]="tab2Root" tabTitle="Control" tabIcon="game-controller-b" [rootParams]="selectedItem"></ion-tab>
+  <ion-tab [root]="tab3Root" tabTitle="Simulate" tabIcon="play" [rootParams]="selectedItem"></ion-tab>
 </ion-tabs>
