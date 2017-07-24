@@ -6,7 +6,9 @@ export class Items {
   items: any[] = [];
   transport: Transport;
   connectionStatus: string = 'disconnected';
-  message: Array<{ deviceId: string, message: string, time: string}> = [];
+  message: Array<{ deviceId: string, message: string, time: string, icon: string, image: string}> = [];
+  icon = {alert: 'assets/images/alert.jpg', tick: 'assets/images/tick.jpg'};
+  image = {doorOpened: 'assets/images/doorOpened.jpg', doorClosed: 'assets/images/doorClosed.png'};
 
   constructor() {}
 
