@@ -9,18 +9,19 @@ import { Items } from '../../global/items';
 
 import { Util } from '../../utility/util';
 import { Transport } from '../../utility/transport';
+import { Network } from '@ionic-native/network';
 
 @Component({
   selector: 'page-device-list',
   templateUrl: 'device-list.html'
 })
 export class DeviceList {
-  items: Array<{ deviceId: string, deviceConnectionString: string, iotHubConnectionString: string }> = [];
+  items: Array<{ deviceId: string, deviceConnectionString: string, iotHubConnectionString: string, connectionState: string }> = [];
   isLoading: boolean = true;
   iotHubConnectionString: string;
   transport: Transport = new Transport();
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network) {
     this.listDevices();
     if (this.globalItems.connectionStatus === 'disconnected') {
       this.startTransport();
@@ -63,35 +64,35 @@ export class DeviceList {
             deviceId: device.deviceId,
             deviceConnectionString: ConnectionString.createWithSharedAccessKey(Utility.getHostName(this.iotHubConnectionString),
               device.deviceId, device.authentication.symmetricKey.primaryKey),
-            iotHubConnectionString: this.iotHubConnectionString
+            iotHubConnectionString: this.iotHubConnectionString,
+            connectionState: device.connectionState
           });
         });
         this.loadComplete(refresher);
       });
     } else {
-      setTimeout(() => {
-        this.items = [];
-        let connectionInfo = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
+      this.items = [];
+      let connectionInfo = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
 
-        if (!connectionInfo || !connectionInfo[1] || !connectionInfo[2] || !connectionInfo[3]) {
-          return;
-        }
+      if (!connectionInfo || !connectionInfo[1] || !connectionInfo[2] || !connectionInfo[3]) {
+        return;
+      }
 
-        Util.restAPI(connectionInfo[1], connectionInfo[3], connectionInfo[2], 'GET', '/devices', null, null, (deviceList, status, unuse) => {
-          deviceList.forEach((device, index) => {
-            this.items.push({
-              deviceId: device.deviceId,
-              deviceConnectionString: ConnectionString.createWithSharedAccessKey(Utility.getHostName(this.iotHubConnectionString),
-                device.deviceId, device.authentication.symmetricKey.primaryKey),
-              iotHubConnectionString: this.iotHubConnectionString
-            });
+      Util.restAPI(connectionInfo[1], connectionInfo[3], connectionInfo[2], 'GET', '/devices', null, null, (deviceList, status, unuse) => {
+        deviceList.forEach((device, index) => {
+          this.items.push({
+            deviceId: device.deviceId,
+            deviceConnectionString: ConnectionString.createWithSharedAccessKey(Utility.getHostName(this.iotHubConnectionString),
+              device.deviceId, device.authentication.symmetricKey.primaryKey),
+            iotHubConnectionString: this.iotHubConnectionString,
+            connectionState: device.connectionState
           });
-        }, (unuse, status, error) => {
-          console.log('error');
         });
+      }, (unuse, status, error) => {
+        console.log('error');
+      });
 
-        this.loadComplete(refresher);
-      }, 2000);
+      this.loadComplete(refresher);
     }
   }
 
@@ -100,6 +101,11 @@ export class DeviceList {
       refresher.complete();
     } else {
       this.isLoading = false;
+      if (this.network.type === 'wifi') {
+        setTimeout(() => {
+          this.listDevices();
+        }, 3000);
+      }
     }
   }
 

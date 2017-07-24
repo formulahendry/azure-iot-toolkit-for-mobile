@@ -13,6 +13,7 @@ import { SimulatePage } from '../pages/simulate/simulate';
 import { Items } from '../global/items';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { Network } from '@ionic-native/network';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     Items,
     StatusBar,
     SplashScreen,
+    Network,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
