@@ -4,11 +4,11 @@
 </ion-header>
 
 <ion-content>
-  <h3 text-center *ngIf="selectedItem">
-    SimulatePage
-    <ion-icon [name]="selectedItem.icon"></ion-icon>
-  </h3>
-  <h4 text-center *ngIf="selectedItem">
-    You navigated here from <b>{{selectedItem.deviceId}}</b>
-  </h4>
+  <ion-item>
+    <ion-label floating> Message </ion-label>
+    <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
+  </ion-item>
+  <button class="simulate-send-button" ion-button large outline item-end (click)="sendMessage()">
+  Send
+  </button>
 </ion-content>
