@@ -36,25 +36,25 @@ export class DeviceList {
     if (!this.transport.initializeIH(this.iotHubConnectionString, '$Default')) {
       return;
     }
-    var deviceList = this;
+    var deviceListPage = this;
 
     this.transport.connectIH(() => {
-      deviceList.globalItems.connectionStatus = 'connected';
+      deviceListPage.globalItems.connectionStatus = 'connected';
     }, () => {
-      deviceList.globalItems.connectionStatus = 'disconnected';
+      deviceListPage.globalItems.connectionStatus = 'disconnected';
     });
 
     this.transport.onMessage = (device, message) => {
       let icon = null;
       let image = null;
       if (message === 'Door opened') {
-        icon = deviceList.globalItems.icon.alert;
-        image = deviceList.globalItems.image.doorOpened;
+        icon = deviceListPage.globalItems.icon.alert;
+        image = deviceListPage.globalItems.image.doorOpened;
       } else if (message === 'Door closed') {
-        icon = deviceList.globalItems.icon.tick;
-        image = deviceList.globalItems.image.doorClosed;
+        icon = deviceListPage.globalItems.icon.tick;
+        image = deviceListPage.globalItems.image.doorClosed;
       }
-      deviceList.globalItems.message.push({
+      deviceListPage.globalItems.message.unshift({
         deviceId: device,
         message: message,
         time: new Date().toLocaleTimeString(),

@@ -4,7 +4,7 @@
 </ion-header>
 
 <ion-content>
-  <template ngFor let-message [ngForOf]="displayMessages.reverse()">
+  <template ngFor let-message [ngForOf]="displayMessages">
     <template [ngIf]="message.deviceId == selectedItem.deviceId">
       <div *ngIf="message.image" class="monitor-message-image-div">
         <img [src]="message.image" class="monitor-message-image" />
