@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
+import { ToastController } from 'ionic-angular';
 
 import { Items } from '../../global/items';
 
@@ -14,17 +15,28 @@ export class PublishPage {
   switchStatus: boolean;
   temperature: number;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public toastCtrl: ToastController) {
     this.selectedItem = navParams.data;
     this.transport = this.globalItems.transport;
   }
 
   sendMessage() {
     if (!this.message) {
-      alert('the message is empty');
+      let toast = this.toastCtrl.create({
+        message: 'Error! The message is empty.',
+        showCloseButton: true,
+        duration: 2000
+      });
+      toast.present();
       return;
     }
     this.transport.send(this.selectedItem.deviceId, this.message);
+    let toast = this.toastCtrl.create({
+      message: 'Message has been sent.',
+      showCloseButton: true,
+      duration: 2000
+    });
+    toast.present();
   }
 
   handleSwitch() {
