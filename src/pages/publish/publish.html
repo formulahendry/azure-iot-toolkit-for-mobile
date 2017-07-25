@@ -4,15 +4,32 @@
 </ion-header>
 
 <ion-content>
-  <h3 text-center *ngIf="selectedItem">
-    PublishPage
-    <ion-icon [name]="selectedItem.icon"></ion-icon>
-  </h3>
-  <h4 text-center *ngIf="selectedItem">
-    You navigated here from <b>{{selectedItem.deviceId}}</b>
-  </h4>
-  <input type="text" name="message" [(ngModel)]="message">
-  <button (click)="sendMessage();">
+  <ion-list>
+
+    <ion-item>
+      <ion-label floating> Message </ion-label>
+      <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label> Switch </ion-label>
+      <ion-toggle [(ngModel)]="switchStatus" (ionChange)="handleSwitch()" check="false"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label> Temperature </ion-label>
+      <ion-badge item-end> {{temperature}} </ion-badge>
+    </ion-item>
+    <ion-item>
+      <ion-range min="15" max="30" [(ngModel)]="temperature" (ionChange)="handleRange()">
+        <ion-label range-left> 15 </ion-label>
+        <ion-label range-right> 30 </ion-label>
+      </ion-range>
+    </ion-item>
+
+    <button class="control-send-button" ion-button large outline item-end (click)="sendMessage()">
     Send
   </button>
+
+  </ion-list>
 </ion-content>

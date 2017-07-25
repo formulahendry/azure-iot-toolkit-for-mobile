@@ -11,6 +11,8 @@ export class PublishPage {
   selectedItem: any;
   message: string;
   transport: any;
+  switchStatus: boolean;
+  temperature: number;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items) {
     this.selectedItem = navParams.data;
@@ -23,5 +25,17 @@ export class PublishPage {
       return;
     }
     this.transport.send(this.selectedItem.deviceId, this.message);
+  }
+
+  handleSwitch() {
+    if (this.switchStatus) {
+      this.message = 'on';
+    } else {
+      this.message = 'off';
+    }
+  }
+
+  handleRange() {
+    this.message = this.temperature.toString();
   }
 }
