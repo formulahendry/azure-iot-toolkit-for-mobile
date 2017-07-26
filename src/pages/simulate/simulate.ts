@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
+import { Platform } from 'ionic-angular';
+import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope';
 
 import { Transport as DeviceTransport } from '../../utility/device/transport';
 import { Items } from '../../global/items';
@@ -11,22 +13,33 @@ import { Items } from '../../global/items';
 export class SimulatePage {
   selectedItem: any;
   message: string;
+  orientation: GyroscopeOrientation;
   mqttConnOpts: any;
   mqttD2COpts: any;
   mqttC2DOpts: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public platform: Platform, private gyroscope: Gyroscope) {
+    this.orientation = { x: 0, y: 0, z: 0, timestamp: 0 };
     this.selectedItem = navParams.data;
-    if (this.globalItems.device.connectionStatus !== 'disconnected') {
-      this.globalItems.device.transport.disconnect();
+    if (platform.is('android') || platform.is('ios')) {
+      let options: GyroscopeOptions = {
+        frequency: 400
+      };
+
+      this.gyroscope.watch(options)
+        .subscribe((orientation: GyroscopeOrientation) => {
+          this.orientation = orientation;
+        });
     }
-    this.connect();
+  }
+
+  setGyroscope() {
+    this.message = `x: ${this.orientation.x.toFixed(3)} y: ${this.orientation.y.toFixed(3)} z: ${this.orientation.z.toFixed(3)}`;
   }
 
   connect() {
     var simulatePage = this;
 
-    this.globalItems.device.connectionStatus = 'connecting';
     this.globalItems.device.transport = new DeviceTransport(this.selectedItem.deviceConnectionString, 60);
     this.mqttConnOpts = this.globalItems.device.transport.getOptions();
     this.globalItems.device.transport.connect(() => {
@@ -38,27 +51,17 @@ export class SimulatePage {
         topic: 'devices/' + simulatePage.mqttConnOpts.clientId + '/messages/devicebound/#',
         qos: 0,
       };
-      simulatePage.globalItems.device.connectionStatus = 'connected';
-    }, (err) => {
-      simulatePage.globalItems.device.connectionStatus = 'disconnected';
-      console.log(err);
-    });
+      this.globalItems.device.transport.publish(this.mqttD2COpts.topic, this.message, 0, false);
+      this.globalItems.device.transport.disconnect();
+    }, null);
   }
 
   sendMessage() {
-    if (this.globalItems.device.connectionStatus !== 'connected') {
-      if (this.globalItems.device.connectionStatus === 'disconnected') {
-        this.connect();
-      }
-      alert('No connection. Try again a few seconds later.');
-      return;
-    }
-
     if (!this.message) {
       alert('Error: The message is empty.');
       return;
     }
 
-    this.globalItems.device.transport.publish(this.mqttD2COpts.topic, this.message, 0, false);
+    this.connect();
   }
 }

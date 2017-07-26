@@ -69,11 +69,15 @@ export class DeviceList {
       });
     };
 
-    this.transport.onError = () => {
-      deviceListPage.globalItems.connectionStatus = 'disconnected';
-      deviceListPage.transport.disconnectIH();
-      deviceListPage.transport.initializeIH(deviceListPage.iotHubConnectionString, '$Default');
-      deviceListPage.transport.connectIH(success, fail);
+    this.transport.onError = (err) => {
+      if (err.condition) {
+        deviceListPage.globalItems.connectionStatus = 'disconnected';
+      } else {
+        deviceListPage.globalItems.connectionStatus = 'connecting';
+        deviceListPage.transport.disconnectIH();
+        deviceListPage.transport.initializeIH(deviceListPage.iotHubConnectionString, '$Default');
+        deviceListPage.transport.connectIH(success, fail);
+      }
     };
 
     this.globalItems.transport = this.transport;
