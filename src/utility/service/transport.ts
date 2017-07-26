@@ -217,8 +217,8 @@ export class Transport {
       }
     });
     this.clientEH.on('error', (context) => {
-      console.log('on error');
-      if (this.onError) this.onError();
+      console.log(context);
+      if (this.onError) this.onError(context);
     });
     this.connectionEH = this.clientEH.connect(this.optionsEH);
   }

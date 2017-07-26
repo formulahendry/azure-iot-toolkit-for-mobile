@@ -15,6 +15,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Network } from '@ionic-native/network';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { Gyroscope } from '@ionic-native/gyroscope';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
     SplashScreen,
     Network,
     LocalNotifications,
+    Gyroscope,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
