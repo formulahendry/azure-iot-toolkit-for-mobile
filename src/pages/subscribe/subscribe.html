@@ -4,8 +4,8 @@
 </ion-header>
 
 <ion-content>
-  <template ngFor let-message [ngForOf]="displayMessages">
-    <template [ngIf]="message.deviceId == selectedItem.deviceId">
+  <ng-template ngFor let-message [ngForOf]="displayMessages">
+    <ng-template [ngIf]="message.deviceId == selectedItem.deviceId">
       <div *ngIf="message.image" class="monitor-message-image-div">
         <img [src]="message.image" class="monitor-message-image" />
       </div>
@@ -16,6 +16,6 @@
         <h2 class="monitor-title"> {{message.message}} </h2>
         <p class="monitor-time"> {{message.time}} </p>
       </ion-item>
-    </template>
-  </template>
+    </ng-template>
+  </ng-template>
 </ion-content>

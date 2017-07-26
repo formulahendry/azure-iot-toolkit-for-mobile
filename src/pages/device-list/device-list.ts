@@ -7,8 +7,8 @@ import { ConnectionString } from 'azure-iot-device';
 
 import { Items } from '../../global/items';
 
-import { Util } from '../../utility/util';
-import { Transport } from '../../utility/transport';
+import { Util } from '../../utility/service/util';
+import { Transport } from '../../utility/service/transport';
 import { Network } from '@ionic-native/network';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 
@@ -21,9 +21,10 @@ export class DeviceList {
   items: Array<{ deviceId: string, deviceConnectionString: string, iotHubConnectionString: string, connectionState: string }> = [];
   isLoading: boolean = true;
   iotHubConnectionString: string;
-  transport: Transport = new Transport();
+  transport: Transport;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications) {
+    this.transport = this.globalItems.transport;
     this.listDevices();
     if (this.globalItems.connectionStatus === 'disconnected') {
       this.startTransport();
@@ -33,16 +34,21 @@ export class DeviceList {
   startTransport() {
     this.globalItems.connectionStatus = 'connecting';
 
+    let success = () => {
+      deviceListPage.globalItems.connectionStatus = 'connected';
+    };
+
+    let fail = () => {
+      deviceListPage.globalItems.connectionStatus = 'disconnected';
+    };
+
     if (!this.transport.initializeIH(this.iotHubConnectionString, '$Default')) {
+      this.globalItems.connectionStatus = 'disconnected';
       return;
     }
     var deviceListPage = this;
 
-    this.transport.connectIH(() => {
-      deviceListPage.globalItems.connectionStatus = 'connected';
-    }, () => {
-      deviceListPage.globalItems.connectionStatus = 'disconnected';
-    });
+    this.transport.connectIH(success, fail);
 
     this.transport.onMessage = (device, message) => {
       let icon = null;
@@ -61,6 +67,13 @@ export class DeviceList {
         icon: icon,
         image: image
       });
+    };
+
+    this.transport.onError = () => {
+      deviceListPage.globalItems.connectionStatus = 'disconnected';
+      deviceListPage.transport.disconnectIH();
+      deviceListPage.transport.initializeIH(deviceListPage.iotHubConnectionString, '$Default');
+      deviceListPage.transport.connectIH(success, fail);
     };
 
     this.globalItems.transport = this.transport;

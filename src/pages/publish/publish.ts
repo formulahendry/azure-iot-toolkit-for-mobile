@@ -23,7 +23,7 @@ export class PublishPage {
   sendMessage() {
     if (!this.message) {
       let toast = this.toastCtrl.create({
-        message: 'Error! The message is empty.',
+        message: 'Error: The message is empty.',
         showCloseButton: true,
         duration: 2000
       });
