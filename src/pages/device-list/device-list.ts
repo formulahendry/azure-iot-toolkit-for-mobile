@@ -27,7 +27,7 @@ export class DeviceList {
   transport: Transport;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public alertCtrl: AlertController, public nativeStorage: NativeStorage) {
-    this.nativeStorage.clear();
+    // this.nativeStorage.clear();
     this.connect();
   }
 
