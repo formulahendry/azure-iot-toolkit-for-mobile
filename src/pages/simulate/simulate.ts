@@ -34,7 +34,7 @@ export class SimulatePage {
   }
 
   setGyroscope() {
-    this.message = `x: ${this.orientation.x.toFixed(3)} y: ${this.orientation.y.toFixed(3)} z: ${this.orientation.z.toFixed(3)}`;
+    this.message = `{x: ${this.orientation.x.toFixed(3)}, y: ${this.orientation.y.toFixed(3)}, z: ${this.orientation.z.toFixed(3)}}`;
   }
 
   connect() {

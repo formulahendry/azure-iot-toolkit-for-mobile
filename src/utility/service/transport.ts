@@ -21,7 +21,6 @@ export class Transport {
   private initializedIH: boolean;
   private initializedEH: boolean;
   public onMessage: Function;
-  public onError: Function;
   public onReadyToSend: Function;
   public onReadyToReceive: Function;
   public onConnectionCloseIH: Function;
@@ -215,10 +214,6 @@ export class Transport {
       } else {
         if (this.onMessage) this.onMessage(context.message.message_annotations['iothub-connection-device-id'], Util.Utf8ArrayToStr(context.message.body.content));
       }
-    });
-    this.clientEH.on('error', (context) => {
-      console.log(context);
-      if (this.onError) this.onError(context);
     });
     this.connectionEH = this.clientEH.connect(this.optionsEH);
   }

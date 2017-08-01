@@ -4,6 +4,8 @@ import { DevicePage } from '../device/device';
 import { Utility } from '../../utility/utility';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
+import { AlertController } from 'ionic-angular';
+import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
 
@@ -21,14 +23,42 @@ export class DeviceList {
   items: Array<{ deviceId: string, deviceConnectionString: string, iotHubConnectionString: string, connectionState: string }> = [];
   isLoading: boolean = true;
   iotHubConnectionString: string;
+  consumerGroup: string;
   transport: Transport;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications) {
-    this.transport = this.globalItems.transport;
-    this.listDevices();
-    if (this.globalItems.connectionStatus === 'disconnected') {
-      this.startTransport();
-    }
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public alertCtrl: AlertController, public nativeStorage: NativeStorage) {
+    this.connect();
+  }
+
+  connect() {
+    this.nativeStorage.getItem('iotHubConnection')
+      .then(
+      data => {
+        console.log(data);
+        this.iotHubConnectionString = data.iotHubConnectionString;
+        this.consumerGroup = data.consumerGroup;
+        let match = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
+
+        if (!match || !match[1] || !match[2] || !match[3]) {
+          alert('Invalid IoT Hub Connection String');
+          this.setConnectionString();
+          return;
+        }
+
+        this.transport = this.globalItems.transport;
+        this.listDevices();
+        if (this.globalItems.connectionStatus !== 'disconnected') {
+          this.transport.disconnectEH();
+          this.transport.disconnectIH();
+        }
+        this.startTransport();
+      },
+      error => {
+        this.iotHubConnectionString = '';
+        this.consumerGroup = '$Default';
+        this.setConnectionString();
+      }
+    );
   }
 
   startTransport() {
@@ -42,7 +72,7 @@ export class DeviceList {
       deviceListPage.globalItems.connectionStatus = 'disconnected';
     };
 
-    if (!this.transport.initializeIH(this.iotHubConnectionString, '$Default')) {
+    if (!this.transport.initializeIH(this.iotHubConnectionString, this.consumerGroup)) {
       this.globalItems.connectionStatus = 'disconnected';
       return;
     }
@@ -69,22 +99,10 @@ export class DeviceList {
       });
     };
 
-    this.transport.onError = (err) => {
-      if (err.condition) {
-        deviceListPage.globalItems.connectionStatus = 'disconnected';
-      } else {
-        deviceListPage.globalItems.connectionStatus = 'connecting';
-        deviceListPage.transport.disconnectIH();
-        deviceListPage.transport.initializeIH(deviceListPage.iotHubConnectionString, '$Default');
-        deviceListPage.transport.connectIH(success, fail);
-      }
-    };
-
     this.globalItems.transport = this.transport;
   }
 
   listDevices(refresher = null) {
-    this.iotHubConnectionString = 'HostName=azure-iot-toolkit-for-mobile.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bl8Ok/bA1infvdDdi8f6XlMmBmT44BrwOkOo7Q+HuZ0=';
     if (Utility.isApp()) {
       let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
       registry.list((err, deviceList) => {
@@ -160,5 +178,39 @@ export class DeviceList {
 
   doRefresh(refresher) {
     this.listDevices(refresher);
+  }
+
+  setConnectionString() {
+    let enterConnectionString = this.alertCtrl.create({
+      title: 'IoT Hub Connection String',
+      inputs: [
+        {
+          name: 'iotHubConnectionString',
+          placeholder: 'IoT Hub Connection String',
+          value: this.iotHubConnectionString
+        },
+        {
+          name: 'consumerGroup',
+          placeholder: 'Consumer Group',
+          value: this.consumerGroup
+        }
+      ],
+      buttons: [
+        {
+          text: 'Save',
+          handler: data => {
+            this.nativeStorage.setItem('iotHubConnection', data);
+            this.connect();
+          }
+        },
+        {
+          text: 'Cancel',
+          handler: data => {
+            return;
+          }
+        }
+      ]
+    });
+    enterConnectionString.present();
   }
 }
