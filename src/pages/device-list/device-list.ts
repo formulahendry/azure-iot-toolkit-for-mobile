@@ -27,7 +27,6 @@ export class DeviceList {
   transport: Transport;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public alertCtrl: AlertController, public nativeStorage: NativeStorage) {
-    // this.nativeStorage.clear();
     this.connect();
   }
 
@@ -55,6 +54,8 @@ export class DeviceList {
         this.startTransport();
       },
       error => {
+        this.iotHubConnectionString = '';
+        this.consumerGroup = '$Default';
         this.setConnectionString();
       }
     );
@@ -102,7 +103,6 @@ export class DeviceList {
   }
 
   listDevices(refresher = null) {
-    // this.iotHubConnectionString = 'HostName=azure-iot-toolkit-for-mobile.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bl8Ok/bA1infvdDdi8f6XlMmBmT44BrwOkOo7Q+HuZ0=';
     if (Utility.isApp()) {
       let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
       registry.list((err, deviceList) => {
@@ -186,12 +186,13 @@ export class DeviceList {
       inputs: [
         {
           name: 'iotHubConnectionString',
-          placeholder: 'IoT Hub Connection String'
+          placeholder: 'IoT Hub Connection String',
+          value: this.iotHubConnectionString
         },
         {
           name: 'consumerGroup',
           placeholder: 'Consumer Group',
-          value: '$Default'
+          value: this.consumerGroup
         }
       ],
       buttons: [
