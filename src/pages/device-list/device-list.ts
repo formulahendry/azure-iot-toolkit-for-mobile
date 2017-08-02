@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { DevicePage } from '../device/device';
 import { Utility } from '../../utility/utility';
+import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
 import { AlertController } from 'ionic-angular';
@@ -103,6 +104,7 @@ export class DeviceList {
   }
 
   listDevices(refresher = null) {
+    AppInsightsClient.sendEvent('List Devices', this.iotHubConnectionString);
     if (Utility.isApp()) {
       let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
       registry.list((err, deviceList) => {
@@ -171,6 +173,7 @@ export class DeviceList {
   }
 
   itemTapped(event, item) {
+    AppInsightsClient.sendEvent('Device Tapped', this.iotHubConnectionString, { deviceId: item.deviceId });
     this.navCtrl.push(DevicePage, {
       item: item
     });
@@ -199,6 +202,7 @@ export class DeviceList {
         {
           text: 'Save',
           handler: data => {
+            AppInsightsClient.sendEvent('Save IoT Hub Connection String', data.iotHubConnectionString);
             this.nativeStorage.setItem('iotHubConnection', data);
             this.connect();
           }
@@ -206,6 +210,7 @@ export class DeviceList {
         {
           text: 'Cancel',
           handler: data => {
+            AppInsightsClient.sendEvent('Cancel for setting IoT Hub Connection String');
             return;
           }
         }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
 import { Items } from '../../global/items';
+import { AppInsightsClient } from '../../utility/appInsightsClient';
 
 @Component({
   selector: 'page-publish',
@@ -20,6 +21,7 @@ export class PublishPage {
   }
 
   sendMessage() {
+    AppInsightsClient.sendEvent('Send C2D Message', this.selectedItem.iotHubConnectionString, { deviceId: this.selectedItem.deviceId });
     if (!this.message) {
       alert('Error: The message is empty.');
       return;

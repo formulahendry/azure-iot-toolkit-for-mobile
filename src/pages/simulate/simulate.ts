@@ -5,6 +5,7 @@ import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native
 
 import { Transport as DeviceTransport } from '../../utility/device/transport';
 import { Items } from '../../global/items';
+import { AppInsightsClient } from '../../utility/appInsightsClient';
 
 @Component({
   selector: 'page-simulate',
@@ -34,6 +35,7 @@ export class SimulatePage {
   }
 
   setGyroscope() {
+    AppInsightsClient.sendEvent('Get Gyroscope Data', this.selectedItem.iotHubConnectionString, { deviceId: this.selectedItem.deviceId });
     this.message = `{x: ${this.orientation.x.toFixed(3)}, y: ${this.orientation.y.toFixed(3)}, z: ${this.orientation.z.toFixed(3)}}`;
   }
 
@@ -57,6 +59,7 @@ export class SimulatePage {
   }
 
   sendMessage() {
+    AppInsightsClient.sendEvent('Send D2C Message', this.selectedItem.iotHubConnectionString, { deviceId: this.selectedItem.deviceId });
     if (!this.message) {
       alert('Error: The message is empty.');
       return;
