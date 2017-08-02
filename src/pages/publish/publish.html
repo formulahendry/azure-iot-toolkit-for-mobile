@@ -6,30 +6,35 @@
 <ion-content>
   <ion-list>
 
-    <ion-item>
-      <ion-label floating> Message </ion-label>
-      <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
-    </ion-item>
+    <ion-card>
+      <ion-item>
+        <ion-label floating> Message </ion-label>
+        <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
+        <button class="control-send-button" ion-button large outline item-end (click)="sendMessage()"> Send </button>
+      </ion-item>
+    </ion-card>
 
-    <ion-item>
-      <ion-label> Switch </ion-label>
-      <ion-toggle [(ngModel)]="switchStatus" (ionChange)="handleSwitch()" check="false"></ion-toggle>
-    </ion-item>
+    <ion-card>
+      <ion-item>
+        <ion-label> Switch </ion-label>
+        <ion-toggle [(ngModel)]="switchStatus" (ionChange)="handleSwitch()" check="false"></ion-toggle>
+      </ion-item>
+    </ion-card>
 
-    <ion-item>
-      <ion-label> Number </ion-label>
-      <ion-badge item-end> {{temperature}} </ion-badge>
-    </ion-item>
-    <ion-item>
-      <ion-range min="0" max="100" [(ngModel)]="temperature" (ionChange)="handleRange()">
-        <ion-label range-left> 0 </ion-label>
-        <ion-label range-right> 100 </ion-label>
-      </ion-range>
-    </ion-item>
-
-    <button class="control-send-button" ion-button large outline item-end (click)="sendMessage()">
-    Send
-    </button>
+    <ion-card>
+      <ion-card-header>
+        <ion-item>
+          <ion-label> Number </ion-label>
+          <ion-badge item-end> {{temperature}} </ion-badge>
+        </ion-item>
+      </ion-card-header>
+      <ion-item>
+        <ion-range min="0" max="100" [(ngModel)]="temperature" (ionChange)="handleRange()">
+          <ion-label range-left> 0 </ion-label>
+          <ion-label range-right> 100 </ion-label>
+        </ion-range>
+      </ion-item>
+    </ion-card>
 
   </ion-list>
 </ion-content>
