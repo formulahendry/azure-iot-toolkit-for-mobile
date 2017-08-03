@@ -1,6 +1,3 @@
-'use strict';
-import { Utility } from './utility';
-
 declare var appInsights;
 
 export class AppInsightsClient {
@@ -14,10 +11,10 @@ export class AppInsightsClient {
     let newProperties = properties ? properties : {};
 
     if (iotHubConnectionString) {
-      let iotHubHostName = Utility.getHostName(iotHubConnectionString);
-      if (iotHubHostName) {
-        newProperties.IoTHubHostName = iotHubHostName;
-      }
+        let iotHubHostName = /^HostName=([^=]+);/.exec(iotHubConnectionString);
+        if (iotHubHostName && iotHubHostName[1]) {
+          newProperties.IoTHubHostName = iotHubHostName[1];
+        }
     }
     return newProperties;
   }
