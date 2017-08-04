@@ -9,6 +9,10 @@ install:
 
 build_script:
   - npm run build
+  - ionic cordova build --release android
 
 test_script:
   - npm run lint
+
+artifacts:
+  - path: 'platforms\android\build\outputs\apk\*.apk'
