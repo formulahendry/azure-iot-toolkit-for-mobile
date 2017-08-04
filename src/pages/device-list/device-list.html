@@ -9,6 +9,9 @@
       <button ion-button icon-only (click)="setConnectionString()">
         <ion-icon name="settings"></ion-icon>
       </button>
+      <button ion-button icon-only (click)="createDevice()">
+        <ion-icon name="add"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -24,6 +27,7 @@
     <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
       <ion-icon name="{{item.connectionState === 'Disconnected' ? 'close-circle' : 'checkmark-circle'}}" item-left></ion-icon>
       {{item.deviceId}}
+      <ion-badge item-right *ngIf="globalItems.unreadMessageNumber[item.deviceId]"> {{globalItems.unreadMessageNumber[item.deviceId]}} </ion-badge>
     </button>
     <ion-card *ngIf="items.length == 0">
       <ion-card-content>

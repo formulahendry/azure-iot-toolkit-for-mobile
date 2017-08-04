@@ -6,7 +6,7 @@ import { Utility } from '../../utility/utility';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
-import { ModalController } from 'ionic-angular';
+import { AlertController, ModalController, ViewController } from 'ionic-angular';
 import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
@@ -28,7 +28,7 @@ export class DeviceList {
   consumerGroup: string;
   transport: Transport;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public modalCtrl: ModalController, public nativeStorage: NativeStorage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController) {
     this.connect();
   }
 
@@ -38,9 +38,7 @@ export class DeviceList {
       data => {
         this.iotHubConnectionString = data.iotHubConnectionString;
         this.consumerGroup = data.consumerGroup;
-        let match = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
-
-        if (!match || !match[1] || !match[2] || !match[3]) {
+        if (!Utility.validConnectionString(this.iotHubConnectionString)) {
           alert('Invalid IoT Hub Connection String');
           this.setConnectionString();
           return;
@@ -82,6 +80,12 @@ export class DeviceList {
     this.transport.connectIH(success, fail);
 
     this.transport.onMessage = (device, message) => {
+      let activePage = this.navCtrl.getActive();
+      if (!deviceListPage.globalItems.unreadMessageNumber[device])
+          deviceListPage.globalItems.unreadMessageNumber[device] = 0;
+      if (activePage.name !== 'DevicePage' || activePage.instance.tabRef.getSelected().tabTitle !== activePage.instance.tab1Title || activePage.instance.selectedItem.deviceId !== device) {
+        ++deviceListPage.globalItems.unreadMessageNumber[device];
+      }
       let icon = null;
       let image = null;
       if (message === 'Door opened') {
@@ -180,9 +184,7 @@ export class DeviceList {
   }
 
   doRefresh(refresher) {
-    let match = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
-
-    if (!match || !match[1] || !match[2] || !match[3]) {
+    if (!Utility.validConnectionString(this.iotHubConnectionString)) {
       refresher.complete();
       return;
     }
@@ -200,5 +202,40 @@ export class DeviceList {
       }
     });
     modal.present();
+  }
+
+  createDevice() {
+    let getDeviceId = this.alertCtrl.create({
+      title: 'Create Device',
+      message: 'Please enter device id to create',
+      inputs: [
+        {
+          type: 'text',
+          name: 'deviceId',
+          placeholder: 'Device Id'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Create',
+          handler: data => {
+            if (data.deviceId) {
+              if (!Utility.validConnectionString(this.iotHubConnectionString)) {
+                alert('Invalid IoT Hub Connection String');
+              } else {
+                let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
+                let deviceId = data.deviceId;
+                registry.create({ deviceId, }, null);
+              }
+            }
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+    getDeviceId.present();
   }
 }
