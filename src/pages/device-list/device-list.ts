@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { DevicePage } from '../device/device';
+import { IothubConnection } from '../iothub-connection/iothub-connection';
 import { Utility } from '../../utility/utility';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
-import { AlertController } from 'ionic-angular';
+import { ModalController } from 'ionic-angular';
 import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
@@ -27,7 +28,7 @@ export class DeviceList {
   consumerGroup: string;
   transport: Transport;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public alertCtrl: AlertController, public nativeStorage: NativeStorage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public modalCtrl: ModalController, public nativeStorage: NativeStorage) {
     this.connect();
   }
 
@@ -35,7 +36,6 @@ export class DeviceList {
     this.nativeStorage.getItem('iotHubConnection')
       .then(
       data => {
-        console.log(data);
         this.iotHubConnectionString = data.iotHubConnectionString;
         this.consumerGroup = data.consumerGroup;
         let match = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
@@ -180,42 +180,25 @@ export class DeviceList {
   }
 
   doRefresh(refresher) {
+    let match = this.iotHubConnectionString.match(/^\s*HostName=(.*?)\.azure\-devices\.net;SharedAccessKeyName=(.*?);SharedAccessKey=(.*?)\s*$/);
+
+    if (!match || !match[1] || !match[2] || !match[3]) {
+      refresher.complete();
+      return;
+    }
     this.listDevices(refresher);
   }
 
   setConnectionString() {
-    let enterConnectionString = this.alertCtrl.create({
-      title: 'IoT Hub Connection String',
-      inputs: [
-        {
-          name: 'iotHubConnectionString',
-          placeholder: 'IoT Hub Connection String',
-          value: this.iotHubConnectionString
-        },
-        {
-          name: 'consumerGroup',
-          placeholder: 'Consumer Group',
-          value: this.consumerGroup
-        }
-      ],
-      buttons: [
-        {
-          text: 'Save',
-          handler: data => {
-            AppInsightsClient.sendEvent('Save IoT Hub Connection String', data.iotHubConnectionString);
-            this.nativeStorage.setItem('iotHubConnection', data);
-            this.connect();
-          }
-        },
-        {
-          text: 'Cancel',
-          handler: data => {
-            AppInsightsClient.sendEvent('Cancel for setting IoT Hub Connection String');
-            return;
-          }
-        }
-      ]
+    let modal = this.modalCtrl.create(IothubConnection, {iotHubConnectionString: this.iotHubConnectionString, consumerGroup: this.consumerGroup});
+    modal.onDidDismiss(data => {
+      if (data) {
+        this.isLoading = true;
+        this.connect();
+      } else {
+        this.isLoading = false;
+      }
     });
-    enterConnectionString.present();
+    modal.present();
   }
 }

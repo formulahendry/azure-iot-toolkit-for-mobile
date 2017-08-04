@@ -9,9 +9,6 @@
       <button ion-button icon-only (click)="setConnectionString()">
         <ion-icon name="settings"></ion-icon>
       </button>
-      <button ion-button icon-only>
-        <ion-icon name="add"></ion-icon>
-      </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -28,5 +25,10 @@
       <ion-icon name="{{item.connectionState === 'Disconnected' ? 'close-circle' : 'checkmark-circle'}}" item-left></ion-icon>
       {{item.deviceId}}
     </button>
+    <ion-card *ngIf="items.length == 0">
+      <ion-card-content>
+        For more information about Azure IoT, please visit <a href="https://aka.ms/azure.iot">aka.ms/azure.iot</a> or <a href="https://azure.microsoft.com/en-us/services/iot-hub/">Azure IoT Hub website</a>.
+      </ion-card-content>
+    </ion-card>
   </ion-list>
 </ion-content>

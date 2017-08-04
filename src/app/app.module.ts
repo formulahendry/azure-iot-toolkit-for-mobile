@@ -9,6 +9,7 @@ import { DeviceList } from '../pages/device-list/device-list';
 import { SubscribePage } from '../pages/subscribe/subscribe';
 import { PublishPage } from '../pages/publish/publish';
 import { SimulatePage } from '../pages/simulate/simulate';
+import { IothubConnection } from '../pages/iothub-connection/iothub-connection';
 
 import { Items } from '../global/items';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -26,7 +27,8 @@ import { NativeStorage } from '@ionic-native/native-storage';
     DeviceList,
     SubscribePage,
     PublishPage,
-    SimulatePage
+    SimulatePage,
+    IothubConnection
   ],
   imports: [
     BrowserModule,
@@ -40,7 +42,8 @@ import { NativeStorage } from '@ionic-native/native-storage';
     DeviceList,
     SubscribePage,
     PublishPage,
-    SimulatePage
+    SimulatePage,
+    IothubConnection
   ],
   providers: [
     Items,

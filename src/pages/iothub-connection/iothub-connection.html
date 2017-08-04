@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title> Setting </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list inset>
+    <ion-item>
+      <ion-label floating> IoT Hub Connection String </ion-label>
+      <ion-input type="text" [(ngModel)]="iotHubConnectionString" clearInput></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating> Consumer Group </ion-label>
+      <ion-input type="text" [(ngModel)]="consumerGroup" clearInput></ion-input>
+    </ion-item>
+
+    <ion-row>
+      <ion-col>
+        <button ion-button outline large (click)="save()" class="button-center"> Save </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button outline large (click)="cancel()" class="button-center"> Cancel </button>
+      </ion-col>
+    </ion-row>
+  </ion-list>
+</ion-content>
