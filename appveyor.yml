@@ -3,7 +3,7 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g ionic
+  - npm install -g ionic cordova
   - npm install
   - node --version
   - npm --version
