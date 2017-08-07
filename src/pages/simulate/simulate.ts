@@ -15,6 +15,7 @@ export class SimulatePage {
   selectedItem: any;
   message: string;
   orientation: GyroscopeOrientation;
+  transport: DeviceTransport;
   mqttConnOpts: any;
   mqttD2COpts: any;
   mqttC2DOpts: any;
@@ -42,9 +43,9 @@ export class SimulatePage {
   connect() {
     var simulatePage = this;
 
-    this.globalItems.device.transport = new DeviceTransport(this.selectedItem.deviceConnectionString, 60);
-    this.mqttConnOpts = this.globalItems.device.transport.getOptions();
-    this.globalItems.device.transport.connect(() => {
+    this.transport = new DeviceTransport(this.selectedItem.deviceConnectionString, 60);
+    this.mqttConnOpts = this.transport.getOptions();
+    this.transport.connect(() => {
       simulatePage.mqttD2COpts = {
         topic: 'devices/' + simulatePage.mqttConnOpts.clientId + '/messages/events/',
         qos: 0,
@@ -53,8 +54,8 @@ export class SimulatePage {
         topic: 'devices/' + simulatePage.mqttConnOpts.clientId + '/messages/devicebound/#',
         qos: 0,
       };
-      this.globalItems.device.transport.publish(this.mqttD2COpts.topic, this.message, 0, false);
-      this.globalItems.device.transport.disconnect();
+      simulatePage.transport.publish(simulatePage.mqttD2COpts.topic, simulatePage.message, 0, false);
+      simulatePage.transport.disconnect();
     }, null);
   }
 
