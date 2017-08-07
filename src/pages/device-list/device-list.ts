@@ -183,6 +183,26 @@ export class DeviceList {
     });
   }
 
+  itemPressed(event, item) {
+    let alert = this.alertCtrl.create({
+      title: 'Delete Device',
+      message: `Do you want to delete the device ${item.deviceId}`,
+      buttons: [
+        {
+          text: 'Delete',
+          handler: () => {
+            this.deleteDevice(item.deviceId);
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+    alert.present();
+  }
+
   doRefresh(refresher) {
     if (!Utility.validConnectionString(this.iotHubConnectionString)) {
       refresher.complete();
@@ -225,7 +245,7 @@ export class DeviceList {
               } else {
                 let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
                 let deviceId = data.deviceId;
-                registry.create({ deviceId, }, null);
+                registry.create({ deviceId, }, this.deviceMethodDone('Create'));
               }
             }
           }
@@ -237,5 +257,35 @@ export class DeviceList {
       ]
     });
     getDeviceId.present();
+  }
+
+  deleteDevice(deviceId: string) {
+    if (!Utility.validConnectionString(this.iotHubConnectionString)) {
+      alert('Invalid IoT Hub Connection String');
+    } else {
+      let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
+      registry.delete(deviceId, this.deviceMethodDone('Delete'));
+    }
+  }
+
+  private deviceMethodDone(op: string, label: string = 'Device') {
+    return (err, deviceInfo, res) => {
+      if (err) {
+        AppInsightsClient.sendEvent(`${op} ${label}`, this.iotHubConnectionString, { Result: 'Fail' });
+        alert(`[${op}] error: ${err.toString()}`);
+      }
+      if (res) {
+        let result = 'Fail';
+        if (res.statusCode < 300) {
+          result = 'Success';
+        }
+        AppInsightsClient.sendEvent(`${op} ${label}`, this.iotHubConnectionString, { Result: result });
+        if (result === 'Fail') {
+          alert(`[${op}] [${result}] status: ${res.statusCode} ${res.statusMessage}`);
+        } else {
+          this.listDevices();
+        }
+      }
+    };
   }
 }

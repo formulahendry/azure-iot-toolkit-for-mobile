@@ -24,7 +24,7 @@
     <ion-spinner class="starting-spinner"></ion-spinner>
   </div>
   <ion-list *ngIf="!isLoading">
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
+    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)" (press)="itemPressed($event, item)">
       <ion-icon name="{{item.connectionState === 'Disconnected' ? 'close-circle' : 'checkmark-circle'}}" item-left></ion-icon>
       {{item.deviceId}}
       <ion-badge item-right *ngIf="globalItems.unreadMessageNumber[item.deviceId]"> {{globalItems.unreadMessageNumber[item.deviceId]}} </ion-badge>
