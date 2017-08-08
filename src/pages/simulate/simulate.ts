@@ -21,6 +21,7 @@ export class SimulatePage {
   canGetGyroscope: boolean = false;
   connectionStatus: string = 'disconnected';
   intervalFunc: NodeJS.Timer;
+  frequentOpt: string = 'start';
   mqttConnOpts: any;
   mqttD2COpts: any;
   mqttC2DOpts: any;
@@ -98,6 +99,7 @@ export class SimulatePage {
             text: 'Sure',
             handler: () => {
               this.stopInterval();
+              this.frequentOpt = 'stop';
               this.intervalFunc = setInterval(() => {
                 this.frequentlySendMessage();
               }, this.interval);
@@ -112,6 +114,7 @@ export class SimulatePage {
       alert.present();
     } else {
       this.stopInterval();
+      this.frequentOpt = 'stop';
       this.intervalFunc = setInterval(() => {
         this.frequentlySendMessage();
       }, this.interval);
@@ -127,7 +130,10 @@ export class SimulatePage {
     }
   }
 
-  stopInterval() {
+  stopInterval(click: string = null) {
+    if (click) {
+      this.frequentOpt = 'start';
+    }
     if (this.intervalFunc)
       clearInterval(this.intervalFunc);
     this.intervalFunc = null;
