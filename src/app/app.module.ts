@@ -18,6 +18,7 @@ import { Network } from '@ionic-native/network';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 import { Gyroscope } from '@ionic-native/gyroscope';
 import { NativeStorage } from '@ionic-native/native-storage';
+import { AppMinimize } from '@ionic-native/app-minimize';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { NativeStorage } from '@ionic-native/native-storage';
     LocalNotifications,
     Gyroscope,
     NativeStorage,
+    AppMinimize,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })

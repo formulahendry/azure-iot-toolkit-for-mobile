@@ -6,7 +6,7 @@ import { Utility } from '../../utility/utility';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
-import { AlertController, ModalController, ViewController } from 'ionic-angular';
+import { AlertController, ModalController, Platform, ViewController } from 'ionic-angular';
 import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
@@ -15,7 +15,7 @@ import { Util } from '../../utility/service/util';
 import { Transport } from '../../utility/service/transport';
 import { Network } from '@ionic-native/network';
 import { LocalNotifications } from '@ionic-native/local-notifications';
-
+import { AppMinimize } from '@ionic-native/app-minimize';
 
 @Component({
   selector: 'page-device-list',
@@ -28,7 +28,16 @@ export class DeviceList {
   consumerGroup: string;
   transport: Transport;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController, public platform: Platform, public appMinimize: AppMinimize) {
+    if (this.platform.is('android')) {
+      this.platform.registerBackButtonAction((event) => {
+        if (this.navCtrl.canGoBack()) {
+          this.navCtrl.pop();
+        } else {
+          this.appMinimize.minimize();
+        }
+      });
+    }
     this.connect();
   }
 
@@ -56,8 +65,7 @@ export class DeviceList {
         this.iotHubConnectionString = '';
         this.consumerGroup = '$Default';
         this.setConnectionString();
-      }
-    );
+      });
   }
 
   startTransport() {
@@ -82,7 +90,7 @@ export class DeviceList {
     this.transport.onMessage = (device, message) => {
       let activePage = this.navCtrl.getActive();
       if (!deviceListPage.globalItems.unreadMessageNumber[device])
-          deviceListPage.globalItems.unreadMessageNumber[device] = 0;
+        deviceListPage.globalItems.unreadMessageNumber[device] = 0;
       if (activePage.name !== 'DevicePage' || activePage.instance.tabRef.getSelected().tabTitle !== activePage.instance.tab1Title || activePage.instance.selectedItem.deviceId !== device) {
         ++deviceListPage.globalItems.unreadMessageNumber[device];
       }
@@ -212,7 +220,7 @@ export class DeviceList {
   }
 
   setConnectionString() {
-    let modal = this.modalCtrl.create(IothubConnection, {iotHubConnectionString: this.iotHubConnectionString, consumerGroup: this.consumerGroup});
+    let modal = this.modalCtrl.create(IothubConnection, { iotHubConnectionString: this.iotHubConnectionString, consumerGroup: this.consumerGroup });
     modal.onDidDismiss(data => {
       if (data) {
         this.isLoading = true;

@@ -20,6 +20,7 @@
         "@angular/http": "4.1.3",
         "@angular/platform-browser": "4.1.3",
         "@angular/platform-browser-dynamic": "4.1.3",
+        "@ionic-native/app-minimize": "^4.1.0",
         "@ionic-native/core": "3.12.1",
         "@ionic-native/gyroscope": "^4.1.0",
         "@ionic-native/local-notifications": "^4.1.0",
@@ -31,6 +32,7 @@
         "@types/node": "^8.0.11",
         "cordova-android": "^6.2.3",
         "cordova-plugin-app-event": "^1.2.0",
+        "cordova-plugin-appminimize": "^1.0.0",
         "cordova-plugin-console": "^1.0.5",
         "cordova-plugin-device": "^1.1.4",
         "cordova-plugin-gyroscope": "^0.1.4",
@@ -69,7 +71,8 @@
             "cordova-plugin-network-information": {},
             "de.appplant.cordova.plugin.local-notification": {},
             "cordova-plugin-gyroscope": {},
-            "cordova-plugin-nativestorage": {}
+            "cordova-plugin-nativestorage": {},
+            "cordova-plugin-appminimize": {}
         },
         "platforms": [
             "android"

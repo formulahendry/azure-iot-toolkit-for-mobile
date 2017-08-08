@@ -79,6 +79,7 @@
     </platform>
     <preference name="instrumentation_key" value="e4f8351d-e5d0-4560-b1f1-94f7760afb20" />
     <engine name="android" spec="^6.2.3" />
+    <plugin name="cordova-plugin-appminimize" spec="^1.0.0" />
     <plugin name="cordova-plugin-console" spec="^1.0.5" />
     <plugin name="cordova-plugin-device" spec="^1.1.4" />
     <plugin name="cordova-plugin-gyroscope" spec="^0.1.4" />
