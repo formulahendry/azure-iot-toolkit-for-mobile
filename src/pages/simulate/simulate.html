@@ -9,15 +9,36 @@
       <ion-item>
         <ion-label floating> Message </ion-label>
         <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
-        <button class="simulate-send-button" ion-button large outline item-end (click)="sendMessage()">Send</button>
+        <button ion-button large outline item-end (click)="sendMessage()">Send</button>
       </ion-item>
     </ion-card>
 
-    <ion-card>
+    <ion-card *ngIf="canGetGyroscope">
       <ion-item>
         <h2> Gyroscope Data </h2>
         <p> x: {{orientation.x.toFixed(3)}}, y: {{orientation.y.toFixed(3)}}, z: {{orientation.z.toFixed(3)}} </p>
         <button ion-button large outline item-end (click)="setGyroscope()">Get</button>
+      </ion-item>
+    </ion-card>
+
+    <ion-card *ngIf="canGetGyroscope">
+      <ion-item>
+        <h2> Send Gyroscope Data Continuously </h2>
+      </ion-item>
+      <ion-item>
+        <ion-label> Time Interval </ion-label>
+        <ion-input type="number" [(ngModel)]="interval" clearInput></ion-input>
+        <p item-right> ms </p>
+      </ion-item>
+      <ion-item>
+        <ion-row>
+          <ion-col>
+            <button ion-button outline (click)="startInterval()" class="button-center"> Start </button>
+          </ion-col>
+          <ion-col>
+            <button ion-button outline (click)="stopInterval()" class="button-center"> Stop </button>
+          </ion-col>
+        </ion-row>
       </ion-item>
     </ion-card>
   </ion-list>
