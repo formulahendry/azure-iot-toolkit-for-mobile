@@ -30,7 +30,7 @@ export class DeviceList {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, private ionicApp: IonicApp, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController, public platform: Platform, public appMinimize: AppMinimize) {
     if (this.platform.is('android')) {
-      this.platform.registerBackButtonAction((event) => {
+      this.platform.registerBackButtonAction(() => {
         let activePortal = this.ionicApp._loadingPortal.getActive() ||
           this.ionicApp._modalPortal.getActive() ||
           this.ionicApp._toastPortal.getActive() ||
