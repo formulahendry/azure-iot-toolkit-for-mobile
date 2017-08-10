@@ -65,7 +65,8 @@ export class DeviceList {
         this.iotHubConnectionString = '';
         this.consumerGroup = '$Default';
         this.setConnectionString();
-      });
+      }
+    );
   }
 
   startTransport() {
