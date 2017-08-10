@@ -26,7 +26,7 @@
         <h2> Send Gyroscope Data Continuously </h2>
       </ion-item>
       <ion-item>
-        <ion-label> Time Interval (ms) </ion-label>
+        <ion-label floating> Time Interval (ms) </ion-label>
         <ion-input type="number" [(ngModel)]="interval" clearInput></ion-input>
         <button item-end ion-button outline (click)="frequentOpt == 'start' ? startInterval() : stopInterval('click')" class="button-center"> {{ frequentOpt }} </button>
       </ion-item>
