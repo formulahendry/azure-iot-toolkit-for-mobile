@@ -10,6 +10,7 @@ import { SubscribePage } from '../pages/subscribe/subscribe';
 import { PublishPage } from '../pages/publish/publish';
 import { SimulatePage } from '../pages/simulate/simulate';
 import { IothubConnection } from '../pages/iothub-connection/iothub-connection';
+import { ControlButtonSetting } from '../pages/control-settings/control-settings';
 
 import { Items } from '../global/items';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -29,7 +30,8 @@ import { AppMinimize } from '@ionic-native/app-minimize';
     SubscribePage,
     PublishPage,
     SimulatePage,
-    IothubConnection
+    IothubConnection,
+    ControlButtonSetting
   ],
   imports: [
     BrowserModule,
@@ -44,7 +46,8 @@ import { AppMinimize } from '@ionic-native/app-minimize';
     SubscribePage,
     PublishPage,
     SimulatePage,
-    IothubConnection
+    IothubConnection,
+    ControlButtonSetting
   ],
   providers: [
     Items,

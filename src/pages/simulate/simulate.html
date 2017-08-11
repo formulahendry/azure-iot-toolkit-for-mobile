@@ -28,7 +28,7 @@
       <ion-item>
         <ion-label floating> Time Interval (ms) </ion-label>
         <ion-input type="number" [(ngModel)]="interval" clearInput></ion-input>
-        <button item-end ion-button outline (click)="frequentOpt == 'start' ? startInterval() : stopInterval('click')" class="button-center"> {{ frequentOpt }} </button>
+        <button item-end ion-button outline (click)="frequentOpt == 'start' ? startInterval() : stopInterval('click')"> {{ frequentOpt }} </button>
       </ion-item>
     </ion-card>
   </ion-list>

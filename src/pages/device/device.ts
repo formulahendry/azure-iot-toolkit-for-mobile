@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 
-import { NavController, NavParams, Tabs } from 'ionic-angular';
+import { ActionSheetController, ModalController, NavController, NavParams, Platform, Tabs } from 'ionic-angular';
 
 import { SubscribePage } from '../subscribe/subscribe';
 
@@ -9,6 +9,7 @@ import { PublishPage } from '../publish/publish';
 import { SimulatePage } from '../simulate/simulate';
 
 import { Items } from '../../global/items';
+import { ControlButtonSetting } from '../control-settings/control-settings';
 
 
 @Component({
@@ -25,12 +26,41 @@ export class DevicePage {
   tab3Title = 'Simulate';
   @ViewChild('tabs') tabRef: Tabs;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public modalCtrl: ModalController, public actionSheetCtrl: ActionSheetController, public platform: Platform) {
     // If we navigated to this page, we will have an item available as a nav param
     this.selectedItem = navParams.get('item');
   }
 
   cleanUnreadNumber() {
     this.globalItems.unreadMessageNumber[this.selectedItem.deviceId] = 0;
+  }
+
+  addControlElement() {
+    let activeTab = this.tabRef.getSelected().tabTitle;
+    if (activeTab === this.tab2Title) {
+      let action = this.actionSheetCtrl.create({
+        title: 'Choose component type:',
+        buttons: [
+          {
+            text: 'Button',
+            icon: !this.platform.is('ios') ? 'game-controller-a' : null,
+            handler: () => {
+              action.dismiss()
+                .then(() => {
+                  let modal = this.modalCtrl.create(ControlButtonSetting, { deviceId: this.selectedItem.deviceId });
+                  modal.present();
+                });
+              return false;
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            icon: !this.platform.is('ios') ? 'close' : null
+          }
+        ]
+      });
+      action.present();
+    }
   }
 }

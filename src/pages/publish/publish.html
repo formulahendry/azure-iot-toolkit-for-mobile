@@ -10,7 +10,7 @@
       <ion-item>
         <ion-label floating> Message </ion-label>
         <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
-        <button class="control-send-button" ion-button outline item-end (click)="sendMessage()"> Send </button>
+        <button ion-button outline item-end (click)="sendMessage(message)"> Send </button>
       </ion-item>
     </ion-card>
 
@@ -33,6 +33,14 @@
           <ion-label range-left> 0 </ion-label>
           <ion-label range-right> 100 </ion-label>
         </ion-range>
+      </ion-item>
+    </ion-card>
+
+    <ion-card *ngFor="let element of elements" (press)="itemPressed(element)">
+      <ion-item *ngIf="element.type == 'button'">
+        <h2 *ngIf="element.title"> {{element.title}} </h2>
+        <p> {{element.value}} </p>
+        <button ion-button outline item-end class="button-center" (click)="sendMessage(element.value)"> {{element.display}} </button>
       </ion-item>
     </ion-card>
 
