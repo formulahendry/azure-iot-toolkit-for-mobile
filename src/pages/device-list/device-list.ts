@@ -6,7 +6,7 @@ import { Utility } from '../../utility/utility';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
-import { AlertController, ModalController, Platform, ViewController } from 'ionic-angular';
+import { AlertController, IonicApp, ModalController, Platform, ViewController } from 'ionic-angular';
 import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
@@ -28,13 +28,22 @@ export class DeviceList {
   consumerGroup: string;
   transport: Transport;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController, public platform: Platform, public appMinimize: AppMinimize) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, private ionicApp: IonicApp, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController, public platform: Platform, public appMinimize: AppMinimize) {
     if (this.platform.is('android')) {
-      this.platform.registerBackButtonAction((event) => {
-        if (this.navCtrl.canGoBack()) {
-          this.navCtrl.pop();
+      this.platform.registerBackButtonAction(() => {
+        let activePortal = this.ionicApp._loadingPortal.getActive() ||
+          this.ionicApp._modalPortal.getActive() ||
+          this.ionicApp._toastPortal.getActive() ||
+          this.ionicApp._overlayPortal.getActive();
+
+        if (activePortal) {
+          activePortal.dismiss();
         } else {
-          this.appMinimize.minimize();
+          if (this.navCtrl.canGoBack()) {
+            this.navCtrl.pop();
+          } else {
+            this.appMinimize.minimize();
+          }
         }
       });
     }

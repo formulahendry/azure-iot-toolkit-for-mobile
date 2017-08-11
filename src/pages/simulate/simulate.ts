@@ -16,19 +16,20 @@ export class SimulatePage {
   selectedItem: any;
   message: string;
   orientation: GyroscopeOrientation;
-  transport: DeviceTransport;
   interval: number = 5000;
   canGetGyroscope: boolean = false;
-  connectionStatus: string = 'disconnected';
-  intervalFunc: NodeJS.Timer;
   frequentOpt: string = 'start';
-  mqttConnOpts: any;
-  mqttD2COpts: any;
-  mqttC2DOpts: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public platform: Platform, private gyroscope: Gyroscope, public alertCtrl: AlertController) {
     this.orientation = { x: 0, y: 0, z: 0, timestamp: 0 };
     this.selectedItem = navParams.data;
+    if (this.globalItems.frequentSendMessageParameter.intervalFunc) {
+      if (this.globalItems.frequentSendMessageParameter.deviceId !== this.selectedItem.deviceId) {
+        this.stopInterval();
+      } else {
+        this.frequentOpt = 'stop';
+      }
+    }
     if (platform.is('android') || platform.is('ios')) {
       this.canGetGyroscope = true;
       let options: GyroscopeOptions = {
@@ -40,8 +41,10 @@ export class SimulatePage {
           this.orientation = orientation;
         });
     }
-    this.connectionStatus = 'disconnected';
-    this.connect();
+    if (this.globalItems.device.connectionStatus !== 'disconnected' && this.globalItems.device.deviceId !== this.selectedItem.deviceId) {
+      this.globalItems.device.transport.disconnect();
+      this.connect();
+    }
   }
 
   setGyroscope() {
@@ -52,23 +55,24 @@ export class SimulatePage {
   connect(message: string = null) {
     var simulatePage = this;
 
-    this.connectionStatus = 'connecting';
-    this.transport = new DeviceTransport(this.selectedItem.deviceConnectionString, 60);
-    this.mqttConnOpts = this.transport.getOptions();
-    this.transport.connect(() => {
-      simulatePage.mqttD2COpts = {
-        topic: 'devices/' + simulatePage.mqttConnOpts.clientId + '/messages/events/',
+    this.globalItems.device.deviceId = this.selectedItem.deviceId;
+    this.globalItems.device.connectionStatus = 'connecting';
+    this.globalItems.device.transport = new DeviceTransport(this.selectedItem.deviceConnectionString, 60);
+    this.globalItems.device.mqttConnOpts = this.globalItems.device.transport.getOptions();
+    this.globalItems.device.transport.connect(() => {
+      simulatePage.globalItems.device.mqttD2COpts = {
+        topic: 'devices/' + simulatePage.globalItems.device.mqttConnOpts.clientId + '/messages/events/',
         qos: 0,
       };
-      simulatePage.mqttC2DOpts = {
-        topic: 'devices/' + simulatePage.mqttConnOpts.clientId + '/messages/devicebound/#',
+      simulatePage.globalItems.device.mqttC2DOpts = {
+        topic: 'devices/' + simulatePage.globalItems.device.mqttConnOpts.clientId + '/messages/devicebound/#',
         qos: 0,
       };
-      simulatePage.connectionStatus = 'connected';
+      simulatePage.globalItems.device.connectionStatus = 'connected';
       if (message)
-        simulatePage.transport.publish(simulatePage.mqttD2COpts.topic, message, 0, false);
+        simulatePage.globalItems.device.transport.publish(simulatePage.globalItems.device.mqttD2COpts.topic, message, 0, false);
     }, () => {
-      simulatePage.connectionStatus = 'disconnected';
+      simulatePage.globalItems.device.connectionStatus = 'disconnected';
     });
   }
 
@@ -78,12 +82,12 @@ export class SimulatePage {
       alert('Error: The message is empty.');
       return;
     }
-    if (this.connectionStatus === 'disconnected') {
+    if (this.globalItems.device.connectionStatus === 'disconnected') {
       this.connect(this.message);
-    } else if (this.connectionStatus === 'connecting') {
+    } else if (this.globalItems.device.connectionStatus === 'connecting') {
       alert('Error: The service is connecting, try it later');
     } else {
-      this.transport.publish(this.mqttD2COpts.topic, this.message, 0, false);
+      this.globalItems.device.transport.publish(this.globalItems.device.mqttD2COpts.topic, this.message, 0, false);
     }
   }
 
@@ -100,7 +104,8 @@ export class SimulatePage {
             handler: () => {
               this.stopInterval();
               this.frequentOpt = 'stop';
-              this.intervalFunc = setInterval(() => {
+              this.globalItems.frequentSendMessageParameter.deviceId = this.selectedItem.deviceId;
+              this.globalItems.frequentSendMessageParameter.intervalFunc = setInterval(() => {
                 this.frequentlySendMessage();
               }, this.interval);
             }
@@ -115,7 +120,8 @@ export class SimulatePage {
     } else {
       this.stopInterval();
       this.frequentOpt = 'stop';
-      this.intervalFunc = setInterval(() => {
+      this.globalItems.frequentSendMessageParameter.deviceId = this.selectedItem.deviceId;
+      this.globalItems.frequentSendMessageParameter.intervalFunc = setInterval(() => {
         this.frequentlySendMessage();
       }, this.interval);
     }
@@ -123,10 +129,10 @@ export class SimulatePage {
 
   frequentlySendMessage() {
     let message = `{x: ${this.orientation.x.toFixed(3)}, y: ${this.orientation.y.toFixed(3)}, z: ${this.orientation.z.toFixed(3)}}`;
-    if (this.connectionStatus === 'disconnected') {
+    if (this.globalItems.device.connectionStatus === 'disconnected') {
       this.connect(message);
-    } else if (this.connectionStatus === 'connected') {
-      this.transport.publish(this.mqttD2COpts.topic, message, 0, false);
+    } else if (this.globalItems.device.connectionStatus === 'connected') {
+      this.globalItems.device.transport.publish(this.globalItems.device.mqttD2COpts.topic, message, 0, false);
     }
   }
 
@@ -134,8 +140,8 @@ export class SimulatePage {
     if (click) {
       this.frequentOpt = 'start';
     }
-    if (this.intervalFunc)
-      clearInterval(this.intervalFunc);
-    this.intervalFunc = null;
+    if (this.globalItems.frequentSendMessageParameter.intervalFunc)
+      clearInterval(this.globalItems.frequentSendMessageParameter.intervalFunc);
+    this.globalItems.frequentSendMessageParameter.intervalFunc = null;
   }
 }
