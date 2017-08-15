@@ -14,7 +14,7 @@
       </ion-item>
     </ion-card>
 
-    <ion-card>
+    <!--<ion-card>
       <ion-card-header>
         <ion-item>
           <ion-label> Number </ion-label>
@@ -27,7 +27,7 @@
           <ion-label range-right> 100 </ion-label>
         </ion-range>
       </ion-item>
-    </ion-card>
+    </ion-card>-->
 
     <ion-card *ngFor="let element of elements" (press)="itemPressed(element)">
       <ion-item *ngIf="element.type == 'button'">
@@ -41,7 +41,7 @@
           <ion-col col-7>
             <ion-item>
               <ion-label text-wrap> {{element.titleOff}} </ion-label>
-              <ion-toggle (ionChange)="handleSwitch($event, element)" checked="{{element.check}}"></ion-toggle>
+              <ion-toggle [(ngModel)]="element.check" (ionChange)="handleSwitch(element)"></ion-toggle>
             </ion-item>
           </ion-col>
           <ion-col col-5>
@@ -51,6 +51,19 @@
           </ion-col>
         </ion-row>
       </ion-grid>
+
+      <ion-list *ngIf="element.type == 'range'">
+        <ion-item>
+          <ion-label *ngIf="element.title"> {{element.title}} </ion-label>
+          <ion-badge item-end> {{element.value}} </ion-badge>
+        </ion-item>
+        <ion-item>
+          <ion-range min="{{element.minValue}}" max="{{element.maxValue}}" step="{{element.step}}" [(ngModel)]="element.value" (ionChange)="handleRange(element)">
+            <ion-label range-left> {{element.minValue}} </ion-label>
+            <ion-label range-right> {{element.maxValue}} </ion-label>
+          </ion-range>
+        </ion-item>
+      </ion-list>
     </ion-card>
 
   </ion-list>

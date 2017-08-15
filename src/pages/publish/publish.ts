@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { ActionSheetController, ModalController, NavController, NavParams, Platform } from 'ionic-angular';
 import { NativeStorage } from '@ionic-native/native-storage';
+import { sprintf } from 'sprintf-js';
 
 import { Items } from '../../global/items';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import { ControlButtonSetting } from '../control-settings/control-button-setting';
 import { ControlSwitchSetting } from '../control-settings/control-switch-setting';
+import { ControlRangeSetting } from '../control-settings/control-range-setting';
 
 @Component({
   selector: 'page-publish',
@@ -37,18 +39,22 @@ export class PublishPage {
     this.transport.send(this.selectedItem.deviceId, message);
   }
 
-  handleSwitch(event, element) {
-    element.check = event.checked;
+  handleSwitch(element) {
     this.nativeStorage.setItem('controlPageElement', this.globalItems.controlPageElement);
-    if (event.checked) {
+    if (element.check) {
       this.message = element.valueOn;
     } else {
       this.message = element.valueOff;
     }
   }
 
-  handleRange() {
-    this.message = this.temperature.toString();
+  handleRange(element) {
+    this.nativeStorage.setItem('controlPageElement', this.globalItems.controlPageElement);
+    if (element.format) {
+      this.message = sprintf(element.format, element.value);
+    } else {
+      this.message = element.value;
+    }
   }
 
   itemPressed(element) {
@@ -66,8 +72,12 @@ export class PublishPage {
                   modal = this.modalCtrl.create(ControlButtonSetting, { deviceId: this.selectedItem.deviceId, element: element });
                 } else if (element.type === 'switch') {
                   modal = this.modalCtrl.create(ControlSwitchSetting, { deviceId: this.selectedItem.deviceId, element: element });
+                } else if (element.type === 'range') {
+                  modal = this.modalCtrl.create(ControlRangeSetting, { deviceId: this.selectedItem.deviceId, element: element});
                 }
-                modal.present();
+                if (modal) {
+                  modal.present();
+                }
               });
             return false;
           }

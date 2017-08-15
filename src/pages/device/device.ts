@@ -11,6 +11,7 @@ import { SimulatePage } from '../simulate/simulate';
 import { Items } from '../../global/items';
 import { ControlButtonSetting } from '../control-settings/control-button-setting';
 import { ControlSwitchSetting } from '../control-settings/control-switch-setting';
+import { ControlRangeSetting } from '../control-settings/control-range-setting';
 
 
 @Component({
@@ -61,6 +62,18 @@ export class DevicePage {
               action.dismiss()
                 .then(() => {
                   let modal = this.modalCtrl.create(ControlSwitchSetting, { deviceId: this.selectedItem.deviceId });
+                  modal.present();
+                });
+              return false;
+            }
+          },
+          {
+            text: 'Slide Bar',
+            icon: !this.platform.is('ios') ? 'options' : null,
+            handler: () => {
+              action.dismiss()
+                .then(() => {
+                  let modal = this.modalCtrl.create(ControlRangeSetting, { deviceId: this.selectedItem.deviceId });
                   modal.present();
                 });
               return false;
