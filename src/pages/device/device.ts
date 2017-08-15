@@ -9,7 +9,8 @@ import { PublishPage } from '../publish/publish';
 import { SimulatePage } from '../simulate/simulate';
 
 import { Items } from '../../global/items';
-import { ControlButtonSetting } from '../control-settings/control-settings';
+import { ControlButtonSetting } from '../control-settings/control-button-setting';
+import { ControlSwitchSetting } from '../control-settings/control-switch-setting';
 
 
 @Component({
@@ -48,6 +49,18 @@ export class DevicePage {
               action.dismiss()
                 .then(() => {
                   let modal = this.modalCtrl.create(ControlButtonSetting, { deviceId: this.selectedItem.deviceId });
+                  modal.present();
+                });
+              return false;
+            }
+          },
+          {
+            text: 'Switch',
+            icon: !this.platform.is('ios') ? 'switch' : null,
+            handler: () => {
+              action.dismiss()
+                .then(() => {
+                  let modal = this.modalCtrl.create(ControlSwitchSetting, { deviceId: this.selectedItem.deviceId });
                   modal.present();
                 });
               return false;

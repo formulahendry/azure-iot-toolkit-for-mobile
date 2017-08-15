@@ -1,5 +1,8 @@
 {
   "name": "azure-iot-toolkit-for-mobile",
   "app_id": "",
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

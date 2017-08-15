@@ -4,7 +4,8 @@ import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
-import { ControlButtonSetting } from '../control-settings/control-settings';
+import { ControlButtonSetting } from '../control-settings/control-button-setting';
+import { ControlSwitchSetting } from '../control-settings/control-switch-setting';
 
 @Component({
   selector: 'page-publish',
@@ -36,11 +37,13 @@ export class PublishPage {
     this.transport.send(this.selectedItem.deviceId, message);
   }
 
-  handleSwitch() {
-    if (this.switchStatus) {
-      this.message = 'on';
+  handleSwitch(event, element) {
+    element.check = event.checked;
+    this.nativeStorage.setItem('controlPageElement', this.globalItems.controlPageElement);
+    if (event.checked) {
+      this.message = element.valueOn;
     } else {
-      this.message = 'off';
+      this.message = element.valueOff;
     }
   }
 
@@ -58,10 +61,13 @@ export class PublishPage {
           handler: () => {
             action.dismiss()
               .then(() => {
+                let modal: any;
                 if (element.type === 'button') {
-                  let modal = this.modalCtrl.create(ControlButtonSetting, { deviceId: this.selectedItem.deviceId, element: element });
-                  modal.present();
+                  modal = this.modalCtrl.create(ControlButtonSetting, { deviceId: this.selectedItem.deviceId, element: element });
+                } else if (element.type === 'switch') {
+                  modal = this.modalCtrl.create(ControlSwitchSetting, { deviceId: this.selectedItem.deviceId, element: element });
                 }
+                modal.present();
               });
             return false;
           }

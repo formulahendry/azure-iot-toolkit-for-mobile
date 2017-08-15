@@ -15,13 +15,6 @@
     </ion-card>
 
     <ion-card>
-      <ion-item>
-        <ion-label> Switch </ion-label>
-        <ion-toggle [(ngModel)]="switchStatus" (ionChange)="handleSwitch()" check="false"></ion-toggle>
-      </ion-item>
-    </ion-card>
-
-    <ion-card>
       <ion-card-header>
         <ion-item>
           <ion-label> Number </ion-label>
@@ -42,6 +35,22 @@
         <p> {{element.value}} </p>
         <button ion-button outline item-end class="button-center" (click)="sendMessage(element.value)"> {{element.display}} </button>
       </ion-item>
+      
+      <ion-grid *ngIf="element.type == 'switch'">
+        <ion-row>
+          <ion-col col-7>
+            <ion-item>
+              <ion-label text-wrap> {{element.titleOff}} </ion-label>
+              <ion-toggle (ionChange)="handleSwitch($event, element)" checked="{{element.check}}"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col col-5>
+            <ion-item>
+              <h2 item-end class="overflow-hidden"> {{element.titleOn}} </h2>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-card>
 
   </ion-list>
