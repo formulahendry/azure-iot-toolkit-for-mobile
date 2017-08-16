@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-navbar>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label floating> Title </ion-label>
+      <ion-input type="text" [(ngModel)]="title" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating> Message Format(with '%d' and '%%') </ion-label>
+      <ion-input type="text" [(ngModel)]="format" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating color="danger"> Min Value* </ion-label>
+      <ion-input type="number" [(ngModel)]="minValue" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating color="danger"> Max Value* </ion-label>
+      <ion-input type="number" [(ngModel)]="maxValue" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating> Step </ion-label>
+      <ion-input type="number" [(ngModel)]="step" clearInput></ion-input>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline (click)="save()" class="button-center"> Save </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button outline (click)="cancel()" class="button-center"> Cancel </button>
+      </ion-col>
+    </ion-row>
+  </ion-list>
+</ion-content>

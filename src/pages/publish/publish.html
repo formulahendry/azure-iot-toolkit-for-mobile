@@ -10,30 +10,45 @@
       <ion-item>
         <ion-label floating> Message </ion-label>
         <ion-input block type="text" [(ngModel)]="message" clearInput></ion-input>
-        <button class="control-send-button" ion-button outline item-end (click)="sendMessage()"> Send </button>
+        <button ion-button outline item-end (click)="sendMessage(message)"> Send </button>
       </ion-item>
     </ion-card>
 
-    <ion-card>
-      <ion-item>
-        <ion-label> Switch </ion-label>
-        <ion-toggle [(ngModel)]="switchStatus" (ionChange)="handleSwitch()" check="false"></ion-toggle>
+    <ion-card *ngFor="let element of elements" (press)="itemPressed(element)">
+      <ion-item *ngIf="element.type == 'button'">
+        <h2 *ngIf="element.title"> {{element.title}} </h2>
+        <p> {{element.value}} </p>
+        <button ion-button outline item-end class="button-center" (click)="sendMessage(element.value)"> {{element.display}} </button>
       </ion-item>
-    </ion-card>
+      
+      <ion-grid *ngIf="element.type == 'switch'">
+        <ion-row>
+          <ion-col col-7>
+            <ion-item>
+              <ion-label text-wrap> {{element.titleOff}} </ion-label>
+              <ion-toggle [(ngModel)]="element.check" (ionChange)="handleSwitch(element)"></ion-toggle>
+            </ion-item>
+          </ion-col>
+          <ion-col col-5>
+            <ion-item>
+              <h2 item-end class="overflow-hidden"> {{element.titleOn}} </h2>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
 
-    <ion-card>
-      <ion-card-header>
+      <ion-list *ngIf="element.type == 'range'">
         <ion-item>
-          <ion-label> Number </ion-label>
-          <ion-badge item-end> {{temperature}} </ion-badge>
+          <ion-label *ngIf="element.title"> {{element.title}} </ion-label>
+          <ion-badge item-end> {{element.value}} </ion-badge>
         </ion-item>
-      </ion-card-header>
-      <ion-item>
-        <ion-range min="0" max="100" [(ngModel)]="temperature" (ionChange)="handleRange()">
-          <ion-label range-left> 0 </ion-label>
-          <ion-label range-right> 100 </ion-label>
-        </ion-range>
-      </ion-item>
+        <ion-item>
+          <ion-range min="{{element.minValue}}" max="{{element.maxValue}}" step="{{element.step}}" [(ngModel)]="element.value" (ionChange)="handleRange(element)">
+            <ion-label range-left> {{element.minValue}} </ion-label>
+            <ion-label range-right> {{element.maxValue}} </ion-label>
+          </ion-range>
+        </ion-item>
+      </ion-list>
     </ion-card>
 
   </ion-list>

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-navbar>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label floating> Title </ion-label>
+      <ion-input type="text" [(ngModel)]="title" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating> Display in Button </ion-label>
+      <ion-input type="text" [(ngModel)]="display" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating color="danger"> Value to Send* </ion-label>
+      <ion-input type="text" [(ngModel)]="value" clearInput></ion-input>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline (click)="save()" class="button-center"> Save </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button outline (click)="cancel()" class="button-center"> Cancel </button>
+      </ion-col>
+    </ion-row>
+  </ion-list>
+</ion-content>

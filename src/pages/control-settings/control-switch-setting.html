@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label floating> Title (on) </ion-label>
+      <ion-input type="text" [(ngModel)]="titleOn" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating> Title (off) </ion-label>
+      <ion-input type="text" [(ngModel)]="titleOff" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating> Value to Send (on) </ion-label>
+      <ion-input type="text" [(ngModel)]="valueOn" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating> Value to Send (off) </ion-label>
+      <ion-input type="text" [(ngModel)]="valueOff" clearInput></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label> Initial Status </ion-label>
+      <ion-select [(ngModel)]="check" interface="popover">
+        <ion-option value="false"> off </ion-option>
+        <ion-option value="true"> on </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <button ion-button outline (click)="save()" class="button-center"> Save </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button outline (click)="cancel()" class="button-center"> Cancel </button>
+      </ion-col>
+    </ion-row>
+  </ion-list>
+</ion-content>

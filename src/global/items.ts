@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Transport } from '../utility/service/transport';
 import { Transport as DeviceTransport } from '../utility/device/transport';
+import { NativeStorage } from '@ionic-native/native-storage';
 
 @Injectable()
 export class Items {
@@ -13,8 +14,19 @@ export class Items {
   image = {doorOpened: 'assets/images/doorOpened.jpg', doorClosed: 'assets/images/doorClosed.png'};
   unreadMessageNumber: { [key: string]: number } = {};
   frequentSendMessageParameter: {deviceId: string, intervalFunc: NodeJS.Timer} = {deviceId: null, intervalFunc: null};
+  controlPageElement: { [key: string]: any[] };
 
-  constructor() {}
+  constructor(public nativeStorage: NativeStorage) {
+    this.nativeStorage.getItem('controlPageElement')
+      .then(
+        data => {
+          this.controlPageElement = data;
+        },
+        error => {
+          this.controlPageElement = {};
+        }
+      );
+  }
 
   query(params?: any) {
     if (!params)
