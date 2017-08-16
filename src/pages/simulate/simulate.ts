@@ -2,8 +2,11 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Platform } from 'ionic-angular';
-import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope';
+import { Gyroscope, GyroscopeOrientation } from '@ionic-native/gyroscope';
+import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
+import { DeviceOrientation} from '@ionic-native/device-orientation';
 
+import { Utility } from '../../utility/utility';
 import { Transport as DeviceTransport } from '../../utility/device/transport';
 import { Items } from '../../global/items';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
@@ -15,13 +18,16 @@ import { AppInsightsClient } from '../../utility/appInsightsClient';
 export class SimulatePage {
   selectedItem: any;
   message: string;
-  orientation: GyroscopeOrientation;
+  orientation: GyroscopeOrientation = {x: 0, y: 0, z: 0, timestamp: 0};
+  acceleration: DeviceMotionAccelerationData = {x: 0, y: 0, z: 0, timestamp: 0};
+  heading: number = 0;
+  direction: string = '';
+  selectedData: string = 'message';
   interval: number = 5000;
   canGetGyroscope: boolean = false;
   frequentOpt: string = 'start';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public platform: Platform, private gyroscope: Gyroscope, public alertCtrl: AlertController) {
-    this.orientation = { x: 0, y: 0, z: 0, timestamp: 0 };
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public platform: Platform, private gyroscope: Gyroscope, public deviceMotion: DeviceMotion, public deviceOrientation: DeviceOrientation, public alertCtrl: AlertController) {
     this.selectedItem = navParams.data;
     if (this.globalItems.frequentSendMessageParameter.intervalFunc) {
       if (this.globalItems.frequentSendMessageParameter.deviceId !== this.selectedItem.deviceId) {
@@ -30,16 +36,47 @@ export class SimulatePage {
         this.frequentOpt = 'stop';
       }
     }
-    if (platform.is('android') || platform.is('ios')) {
-      this.canGetGyroscope = true;
-      let options: GyroscopeOptions = {
+
+    if (Utility.isApp()) {
+      let options = {
         frequency: 400
       };
-
-      this.gyroscope.watch(options)
-        .subscribe((orientation: GyroscopeOrientation) => {
-          this.orientation = orientation;
+      this.deviceMotion.watchAcceleration(options)
+        .subscribe((acceleration) => {
+          this.acceleration = acceleration;
         });
+
+      this.deviceOrientation.watchHeading({frequency: 50})
+        .subscribe((heading) => {
+          if (0 <= heading.trueHeading && heading.trueHeading <= 360) {
+            this.heading = heading.trueHeading;
+          } else {
+            this.heading = heading.magneticHeading;
+          }
+          this.direction = '';
+          if ((0 <= this.heading && this.heading < 70) || (290 < this.heading && this.heading <= 360)) {
+            this.direction += 'north';
+          } else if (110 < this.heading && this.heading < 250) {
+            this.direction += 'south';
+          }
+          if (20 < this.heading && this.heading < 160) {
+            this.direction += 'east';
+          } else if (200 < this.heading && this.heading < 340) {
+            this.direction += 'west';
+          }
+          this.direction = this.direction && (this.direction[0].toLocaleUpperCase() + this.direction.slice(1));
+        });
+
+      if (platform.is('android') || platform.is('ios')) {
+        this.canGetGyroscope = true;
+
+        this.gyroscope.watch(options)
+          .subscribe((orientation: GyroscopeOrientation) => {
+            this.orientation = orientation;
+          });
+      }
+    } else {
+      this.canGetGyroscope = true;
     }
     if (this.globalItems.device.connectionStatus !== 'disconnected' && this.globalItems.device.deviceId !== this.selectedItem.deviceId) {
       this.globalItems.device.transport.disconnect();
@@ -49,7 +86,25 @@ export class SimulatePage {
 
   setGyroscope() {
     AppInsightsClient.sendEvent('Get Gyroscope Data', this.selectedItem.iotHubConnectionString, { deviceId: this.selectedItem.deviceId });
-    this.message = `{x: ${this.orientation.x.toFixed(3)}, y: ${this.orientation.y.toFixed(3)}, z: ${this.orientation.z.toFixed(3)}}`;
+    let message = {x: +this.orientation.x.toFixed(3), y: +this.orientation.y.toFixed(3), z: +this.orientation.z.toFixed(3), type: 'gyroscope'};
+    this.message = JSON.stringify(message);
+  }
+
+  setAcceleration() {
+    AppInsightsClient.sendEvent('Get Acceleration', this.selectedItem.iotHubConnectionString, { deviceId: this.selectedItem.deviceId });
+    let message = {x: +this.acceleration.x.toFixed(3), y: +this.acceleration.y.toFixed(3), z: +this.acceleration.z.toFixed(3), type: 'acceleration'};
+    this.message = JSON.stringify(message);
+  }
+
+  setHeading() {
+    AppInsightsClient.sendEvent('Get Heading', this.selectedItem.iotHubConnectionString, { deviceId: this.selectedItem.deviceId });
+    let message;
+    if (!this.direction) {
+      message = {heading: +this.heading.toFixed(3)};
+    } else {
+      message = {direction: this.direction, heading: +this.heading.toFixed(3)};
+    }
+    this.message = JSON.stringify(message);
   }
 
   connect(message: string = null) {
@@ -128,7 +183,30 @@ export class SimulatePage {
   }
 
   frequentlySendMessage() {
-    let message = `{x: ${this.orientation.x.toFixed(3)}, y: ${this.orientation.y.toFixed(3)}, z: ${this.orientation.z.toFixed(3)}}`;
+    let message: any = '';
+    if (this.selectedData === 'message')
+       message = this.message;
+    else if (this.selectedData === 'gyroscope')
+      message = {x: +this.orientation.x.toFixed(3), y: +this.orientation.y.toFixed(3), z: +this.orientation.z.toFixed(3), type: 'gyroscope'};
+    else if (this.selectedData === 'acceleration')
+      message = {x: +this.acceleration.x.toFixed(3), y: +this.acceleration.y.toFixed(3), z: +this.acceleration.z.toFixed(3), type: 'acceleration'};
+    else if (this.selectedData === 'heading') {
+      if (!this.direction) {
+        message = {heading: +this.heading.toFixed(3)};
+      } else {
+        message = {direction: this.direction, heading: +this.heading.toFixed(3)};
+      }
+    }
+
+    if (typeof message !== 'string') {
+      message = JSON.stringify(message);
+    }
+
+    if (!message) {
+      alert('Error: Message is empty');
+      return;
+    }
+
     if (this.globalItems.device.connectionStatus === 'disconnected') {
       this.connect(message);
     } else if (this.globalItems.device.connectionStatus === 'connected') {

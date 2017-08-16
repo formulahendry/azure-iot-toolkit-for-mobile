@@ -21,9 +21,31 @@
       </ion-item>
     </ion-card>
 
-    <ion-card *ngIf="canGetGyroscope">
+    <ion-card>
       <ion-item>
-        <h2> Send Gyroscope Data Continuously </h2>
+        <h2> Acceleration </h2>
+        <p> x: {{acceleration.x.toFixed(3)}}, y: {{acceleration.y.toFixed(3)}}, z: {{acceleration.z.toFixed(3)}} </p>
+        <button ion-button outline item-end (click)="setAcceleration()">Get</button>
+      </ion-item>
+    </ion-card>
+
+    <ion-card>
+      <ion-item>
+        <h2> Heading </h2>
+        <p><template [ngIf]="direction"> {{direction}}: </template> {{heading.toFixed(3)}} </p>
+        <button ion-button outline item-end (click)="setHeading()">Get</button>
+      </ion-item>
+    </ion-card>
+
+    <ion-card>
+      <ion-item>
+        <ion-label> Send Data Continuously </ion-label>
+        <ion-select [(ngModel)]="selectedData" interface="popover">
+          <ion-option value="message"> Message </ion-option>
+          <ion-option value="gyroscope" *ngIf="canGetGyroscope"> Gyroscope </ion-option>
+          <ion-option value="acceleration"> Acceleration </ion-option>
+          <ion-option value="heading"> Heading </ion-option>
+        </ion-select>
       </ion-item>
       <ion-item>
         <ion-label floating> Time Interval (ms) </ion-label>
