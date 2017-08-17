@@ -15,6 +15,7 @@ export class Items {
   unreadMessageNumber: { [key: string]: number } = {};
   frequentSendMessageParameter: {deviceId: string, intervalFunc: NodeJS.Timer} = {deviceId: null, intervalFunc: null};
   controlPageElement: { [key: string]: any[] };
+  deviceNotification: { [key: string]: boolean };
 
   constructor(public nativeStorage: NativeStorage) {
     this.nativeStorage.getItem('controlPageElement')
@@ -24,6 +25,16 @@ export class Items {
         },
         error => {
           this.controlPageElement = {};
+        }
+      );
+
+    this.nativeStorage.getItem('deviceNotification')
+      .then(
+        data => {
+          this.deviceNotification = data;
+        },
+        error => {
+          this.deviceNotification = {};
         }
       );
   }

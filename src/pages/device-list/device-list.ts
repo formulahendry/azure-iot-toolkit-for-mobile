@@ -6,7 +6,7 @@ import { Utility } from '../../utility/utility';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
 import { ConnectionString } from 'azure-iot-device';
-import { AlertController, IonicApp, ModalController, Platform, ViewController } from 'ionic-angular';
+import { ActionSheetController, AlertController, IonicApp, ModalController, Platform, ViewController } from 'ionic-angular';
 import { NativeStorage } from '@ionic-native/native-storage';
 
 import { Items } from '../../global/items';
@@ -28,7 +28,7 @@ export class DeviceList {
   consumerGroup: string;
   transport: Transport;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, private ionicApp: IonicApp, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController, public platform: Platform, public appMinimize: AppMinimize) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, private network: Network, private localNotifications: LocalNotifications, private ionicApp: IonicApp, public modalCtrl: ModalController, public nativeStorage: NativeStorage, public viewCtrl: ViewController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController, public platform: Platform, public appMinimize: AppMinimize) {
     if (this.platform.is('android')) {
       this.platform.registerBackButtonAction(() => {
         let activePortal = this.ionicApp._loadingPortal.getActive() ||
@@ -120,6 +120,16 @@ export class DeviceList {
         icon: icon,
         image: image
       });
+      if (deviceListPage.globalItems.deviceNotification[device]) {
+        let notificationNumber = this.hash(device);
+        deviceListPage.localNotifications.schedule({
+          id: notificationNumber,
+          title: `D2C Message Received`,
+          text: `[${device}] ${message}`,
+          badge: deviceListPage.globalItems.unreadMessageNumber[device],
+          led: '00FF00'
+        });
+      }
     };
 
     this.globalItems.transport = this.transport;
@@ -202,6 +212,43 @@ export class DeviceList {
   }
 
   itemPressed(event, item) {
+    let action = this.actionSheetCtrl.create({
+      title: 'Device Options',
+      buttons: [
+        {
+          text: this.globalItems.deviceNotification[item.deviceId] ? 'Unsubscribe D2C Message Notification' : 'Subscribe D2C Message Notification',
+          icon: !this.platform.is('iot') ? (this.globalItems.deviceNotification[item.deviceId] ? 'heart' : 'heart-outline') : null,
+          handler: () => {
+            if (this.globalItems.deviceNotification[item.deviceId])
+              this.globalItems.deviceNotification[item.deviceId] = false;
+            else
+              this.globalItems.deviceNotification[item.deviceId] = true;
+            this.nativeStorage.setItem('deviceNotification', this.globalItems.deviceNotification);
+          }
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          icon: !this.platform.is('ios') ? 'trash' : null,
+          handler: () => {
+            action.dismiss()
+              .then(() => {
+                this.confirmDeleteDevice(item);
+              });
+            return false;
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: !this.platform.is('iot') ? 'close' : null
+        }
+      ]
+    });
+    action.present();
+  }
+
+  confirmDeleteDevice(item) {
     let alert = this.alertCtrl.create({
       title: 'Delete Device',
       message: `Do you want to delete the device ${item.deviceId}`,
@@ -305,5 +352,14 @@ export class DeviceList {
         }
       }
     };
+  }
+
+  hash(deviceId: string): number {
+    const mod = 1e9 + 7;
+    let result = 0;
+    for (let ch of deviceId) {
+      result = (result + ch.charCodeAt(0) * 131) % mod;
+    }
+    return result;
   }
 }
