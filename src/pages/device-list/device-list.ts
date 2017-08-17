@@ -217,7 +217,7 @@ export class DeviceList {
       buttons: [
         {
           text: this.globalItems.deviceNotification[item.deviceId] ? 'Unsubscribe D2C Message Notification' : 'Subscribe D2C Message Notification',
-          icon: !this.platform.is('iot') ? (this.globalItems.deviceNotification[item.deviceId] ? 'heart' : 'heart-outline') : null,
+          icon: !this.platform.is('ios') ? (this.globalItems.deviceNotification[item.deviceId] ? 'heart' : 'heart-outline') : null,
           handler: () => {
             if (this.globalItems.deviceNotification[item.deviceId])
               this.globalItems.deviceNotification[item.deviceId] = false;
@@ -241,7 +241,7 @@ export class DeviceList {
         {
           text: 'Cancel',
           role: 'cancel',
-          icon: !this.platform.is('iot') ? 'close' : null
+          icon: !this.platform.is('ios') ? 'close' : null
         }
       ]
     });
