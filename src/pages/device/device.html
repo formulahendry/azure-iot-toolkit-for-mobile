@@ -5,7 +5,7 @@
     </button>
     <ion-title>{{selectedItem.deviceId}}</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only (click)="addControlElement()">
+      <button ion-button icon-only (click)="addControlElement()" *ngIf="isTab2">
         <ion-icon name="add"></ion-icon>
       </button>
     </ion-buttons>
@@ -13,7 +13,7 @@
 </ion-header>
 
 <ion-tabs #tabs>
-  <ion-tab [root]="tab1Root" tabTitle="{{tab1Title}}" tabBadge="{{globalItems.unreadMessageNumber[selectedItem.deviceId] > 0 ? globalItems.unreadMessageNumber[selectedItem.deviceId]: ''}}" tabIcon="eye" [rootParams]="selectedItem" (ionSelect)="cleanUnreadNumber()"></ion-tab>
-  <ion-tab [root]="tab2Root" tabTitle="{{tab2Title}}" tabIcon="game-controller-b" [rootParams]="selectedItem"></ion-tab>
-  <ion-tab [root]="tab3Root" tabTitle="{{tab3Title}}" tabIcon="play" [rootParams]="selectedItem"></ion-tab>
+  <ion-tab [root]="tab1Root" tabTitle="{{tab1Title}}" tabBadge="{{globalItems.unreadMessageNumber[selectedItem.deviceId] > 0 ? globalItems.unreadMessageNumber[selectedItem.deviceId]: ''}}" tabIcon="eye" [rootParams]="selectedItem" (ionSelect)="selectTab()"></ion-tab>
+  <ion-tab [root]="tab2Root" tabTitle="{{tab2Title}}" tabIcon="game-controller-b" [rootParams]="selectedItem" (ionSelect)="selectTab()"></ion-tab>
+  <ion-tab [root]="tab3Root" tabTitle="{{tab3Title}}" tabIcon="play" [rootParams]="selectedItem" (ionSelect)="selectTab()"></ion-tab>
 </ion-tabs>

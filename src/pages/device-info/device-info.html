@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title> {{deviceId}} </ion-title>
+    <ion-buttons end *ngIf="infoType == 'Device Twin'">
+      <button ion-button (click)="saveDeviceTwin()"> Save </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <h4> {{infoType}} </h4>
+  <textarea [(ngModel)]="info"></textarea>
+</ion-content>
