@@ -13,6 +13,7 @@ import { IothubConnection } from '../pages/iothub-connection/iothub-connection';
 import { ControlButtonSetting } from '../pages/control-settings/control-button-setting';
 import { ControlSwitchSetting } from '../pages/control-settings/control-switch-setting';
 import { ControlRangeSetting } from '../pages/control-settings/control-range-setting';
+import { DeviceInfo } from '../pages/device-info/device-info';
 
 import { Items } from '../global/items';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -37,7 +38,8 @@ import { DeviceOrientation } from '@ionic-native/device-orientation';
     IothubConnection,
     ControlButtonSetting,
     ControlSwitchSetting,
-    ControlRangeSetting
+    ControlRangeSetting,
+    DeviceInfo
   ],
   imports: [
     BrowserModule,
@@ -55,7 +57,8 @@ import { DeviceOrientation } from '@ionic-native/device-orientation';
     IothubConnection,
     ControlButtonSetting,
     ControlSwitchSetting,
-    ControlRangeSetting
+    ControlRangeSetting,
+    DeviceInfo
   ],
   providers: [
     Items,

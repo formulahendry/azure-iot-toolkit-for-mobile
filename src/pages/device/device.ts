@@ -27,10 +27,23 @@ export class DevicePage {
   tab2Title = 'Control';
   tab3Title = 'Simulate';
   @ViewChild('tabs') tabRef: Tabs;
+  isTab2: boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public globalItems: Items, public modalCtrl: ModalController, public actionSheetCtrl: ActionSheetController, public platform: Platform) {
     // If we navigated to this page, we will have an item available as a nav param
     this.selectedItem = navParams.get('item');
+  }
+
+  selectTab() {
+    let activeTab = this.tabRef.getSelected().tabTitle;
+    if (activeTab === this.tab2Title) {
+      this.isTab2 = true;
+    } else {
+      this.isTab2 = false;
+      if (activeTab === this.tab1Title) {
+        this.cleanUnreadNumber();
+      }
+    }
   }
 
   cleanUnreadNumber() {

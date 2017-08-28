@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { DevicePage } from '../device/device';
 import { IothubConnection } from '../iothub-connection/iothub-connection';
+import { DeviceInfo } from '../device-info/device-info';
 import { Utility } from '../../utility/utility';
 import { AppInsightsClient } from '../../utility/appInsightsClient';
 import * as iothub from 'azure-iothub';
@@ -227,7 +228,29 @@ export class DeviceList {
           }
         },
         {
-          text: 'Delete',
+          text: 'View Device Info',
+          icon: !this.platform.is('ios') ? 'eye' : null,
+          handler: () => {
+            action.dismiss()
+              .then(() => {
+                this.getDevice(item.deviceId);
+              });
+            return false;
+          }
+        },
+        {
+          text: 'Edit Device Twin',
+          icon: !this.platform.is('ios') ? 'create' : null,
+          handler: () => {
+            action.dismiss()
+              .then(() => {
+                this.getDeviceTwin(item.deviceId);
+              });
+            return false;
+          }
+        },
+        {
+          text: 'Delete Device',
           role: 'destructive',
           icon: !this.platform.is('ios') ? 'trash' : null,
           handler: () => {
@@ -333,6 +356,24 @@ export class DeviceList {
     }
   }
 
+  getDevice(deviceId: string) {
+    if (!Utility.validConnectionString(this.iotHubConnectionString)) {
+      alert('Invalid IoT Hub Connection String');
+    } else {
+      let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
+      registry.get(deviceId, this.deviceMethodDone('Get'));
+    }
+  }
+
+  getDeviceTwin(deviceId: string) {
+    if (!Utility.validConnectionString(this.iotHubConnectionString)) {
+      alert('Invalid IoT Hub Connection String');
+    } else {
+      let registry = iothub.Registry.fromConnectionString(this.iotHubConnectionString);
+      registry.getTwin(deviceId, this.deviceMethodDone('Get', 'Device Twin'));
+    }
+  }
+
   private deviceMethodDone(op: string, label: string = 'Device') {
     return (err, deviceInfo, res) => {
       if (err) {
@@ -350,6 +391,12 @@ export class DeviceList {
         } else {
           this.listDevices();
         }
+      }
+      if (op === 'Get' && deviceInfo) {
+        if (label === 'Device')
+          this.navCtrl.push(DeviceInfo, {type: 'Device Info', deviceId: deviceInfo.deviceId, info: JSON.stringify(deviceInfo, null, 4), iotHubConnectionString: this.iotHubConnectionString});
+        else if (label === 'Device Twin')
+          this.navCtrl.push(DeviceInfo, {type: 'Device Twin', deviceId: deviceInfo.deviceId, info: JSON.stringify(deviceInfo, null, 4), iotHubConnectionString: this.iotHubConnectionString});
       }
     };
   }

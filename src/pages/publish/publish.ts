@@ -63,7 +63,7 @@ export class PublishPage {
       buttons: [
         {
           text: 'Edit',
-          icon: !this.platform.is('ios') ? 'eye' : null,
+          icon: !this.platform.is('ios') ? 'create' : null,
           handler: () => {
             action.dismiss()
               .then(() => {
